@@ -1,12 +1,11 @@
 #Copies values from one xlsx file to another
 print("MASTERFILE START")
 # Hard-coded values
-FINAL_OUTPUT_PATH = "MASTERFILE_OUTPUT.pdf"
 
 SOURCE_FILE_PATH = "workdata/2023'.xlsx"
 SOURCE_SHEET_NAME = "December 2023"
 
-TARGET_FILE_PATH = "workdata/North2.xlsx"
+TARGET_FILE_PATH = "workdata/North.xlsx"
 TARGET_SHEET_NAME = "N-2 "
 
 SOURCE_START_ROW = 37
@@ -22,18 +21,20 @@ NUMBER_OF_ROWS_IN_N_1 = 30
 NUMBER_OF_ROWS_IN_N_2 = 36
 NUMBER_OF_ROWS_IN_N_3 = 26
 
+FINAL_OUTPUT_PATH = "MASTERFILE_OUTPUT.pdf"
+TEMP_TARGET_FILE_PATH = "North_temp.xlsx"
+
+import shutil
+import os
+import subprocess
+
 try:
     import openpyxl
 except ImportError as e:
     print(f"Error: {e}\nopenpyxl is not installed. Installing...")
-    import subprocess
     subprocess.check_call(["pip", "install", "openpyxl"])
     print("Installation complete. You can now run the script.")
     exit()
-
-
-import os
-import subprocess
 
 
 def column_letter_to_number(column_letter):
@@ -45,6 +46,26 @@ def column_letter_to_number(column_letter):
     for char in column_letter:
         column_number = column_number * 26 + ord(char) - ord('A') + 1
     return column_number
+
+def copy_excel_file(source_path, destination_path):
+    try:
+        shutil.copy2(source_path, destination_path)
+        print(f'Successfully copied {source_path} to {destination_path}.')
+    except Exception as e:
+        print(f'An error occurred: {e}')
+
+
+def rename_file(source_path, new_name):
+    try:
+        # Create the destination path by combining the directory and the new name
+        destination_path = os.path.join(os.path.dirname(source_path), new_name)
+
+        # Rename the file
+        shutil.move(source_path, destination_path)
+
+        print(f'Successfully renamed {source_path} to {destination_path}.')
+    except Exception as e:
+        print(f'An error occurred: {e}')
 
 def copy_paste_cells(src_file_path, src_sheet_name, src_start_row, src_start_col, src_end_row, src_end_col,
                      target_file_path, target_sheet_name, target_start_row, target_start_col):
@@ -169,35 +190,39 @@ if isinstance(SOURCE_END_COLUMN, str):
 if isinstance(TARGET_START_COLUMN, str):
     TARGET_START_COLUMN = column_letter_to_number(TARGET_START_COLUMN)
 
+# Save Target File as a temp file for modification
+copy_excel_file(TARGET_FILE_PATH, TEMP_TARGET_FILE_PATH)
+
+
 # Display information about the copy-paste operation
 print(f"Attempting to Copy cells ({SOURCE_START_ROW}, {SOURCE_START_COLUMN}) "
       f"to ({SOURCE_END_ROW}, {SOURCE_END_COLUMN}) in '{SOURCE_FILE_PATH}' sheet '{SOURCE_SHEET_NAME}'")
 print(f"And Paste into cells ({TARGET_START_ROW}, {TARGET_START_COLUMN}) "
       f"to ({TARGET_START_ROW + (SOURCE_END_ROW - SOURCE_START_ROW)}, "
       f"{TARGET_START_COLUMN + (SOURCE_END_COLUMN - SOURCE_START_COLUMN)}) "
-      f"in '{TARGET_FILE_PATH}' sheet '{TARGET_SHEET_NAME}'")
+      f"in '{TEMP_TARGET_FILE_PATH}' sheet '{TARGET_SHEET_NAME}'")
 
 
 # Call copy_paste_cells with the converted values and global row values
 copy_paste_cells(SOURCE_FILE_PATH, SOURCE_SHEET_NAME, SOURCE_START_ROW, 
                  SOURCE_START_COLUMN, SOURCE_END_ROW, SOURCE_END_COLUMN, 
-                 TARGET_FILE_PATH, TARGET_SHEET_NAME, TARGET_START_ROW, TARGET_START_COLUMN)
+                 TEMP_TARGET_FILE_PATH, TARGET_SHEET_NAME, TARGET_START_ROW, TARGET_START_COLUMN)
 
 # Find the rows that correspond to empty cells in the PH column
-print(f"Checking for empty cells in '{TARGET_FILE_PATH}'")
+print(f"Checking for empty cells in '{TEMP_TARGET_FILE_PATH}'")
 columns_to_check = [TARGET_START_COLUMN]
-list_empty_rows = find_empty_cells(TARGET_FILE_PATH, columns_to_check, (SOURCE_END_ROW - SOURCE_START_ROW), TARGET_START_ROW)
+list_empty_rows = find_empty_cells(TEMP_TARGET_FILE_PATH, columns_to_check, (SOURCE_END_ROW - SOURCE_START_ROW), TARGET_START_ROW)
 print(list_empty_rows)
 print("END")
 
 # Convert the .xlsx file to a pdf
-print(f"Attempting to convert '{TARGET_FILE_PATH}' into a pdf file")
+print(f"Attempting to convert '{TEMP_TARGET_FILE_PATH}' into a pdf file")
 
 # Provide the full path to the soffice executable
 input_soffice_path = r"C:/Program Files/LibreOffice/program/soffice.exe"
-raw_pdf_path = excel_to_pdf_with_libreoffice(TARGET_FILE_PATH, "Masterfile.pdf", input_soffice_path)
+raw_pdf_path = excel_to_pdf_with_libreoffice(TEMP_TARGET_FILE_PATH, "Masterfile.pdf", input_soffice_path)
 
-print(f"Created file: '{TARGET_FILE_PATH}'.pdf")
+print(f"Created file: '{raw_pdf_path}'")
 
 # find the pdf and create a version stripped of the false pages
 # 8 and 18 need to turn into pages 41 and 51
@@ -213,7 +238,7 @@ print(f"The excluded pages list is: '{list_excluded_pages}'")
 #Then add all excluded pages for N-3
 
 #Then convert the pdf file into one that doesnt have the excluded pages
-pdf_to_pdf_exclude_pages("North2.pdf", FINAL_OUTPUT_PATH, list_excluded_pages)
+pdf_to_pdf_exclude_pages(raw_pdf_path, FINAL_OUTPUT_PATH, list_excluded_pages)
 
 print(f"Created file: '{FINAL_OUTPUT_PATH}'")
 # Prompt the user to press Enter before closing
