@@ -35,7 +35,13 @@ except ImportError as e:
     subprocess.check_call(["pip", "install", "openpyxl"])
     print("Installation complete. You can now run the script.")
     exit()
-
+try:
+    import PyPDF2
+except ImportError as e:
+    print(f"Error: {e}\nPyPDF2 is not installed. Installing...")
+    subprocess.check_call(["pip", "install", "PyPDF2"])
+    print("Installation complete. You can now run the script.")
+    exit()
 
 def column_letter_to_number(column_letter):
     """
@@ -51,19 +57,6 @@ def copy_excel_file(source_path, destination_path):
     try:
         shutil.copy2(source_path, destination_path)
         print(f'Successfully copied {source_path} to {destination_path}.')
-    except Exception as e:
-        print(f'An error occurred: {e}')
-
-
-def rename_file(source_path, new_name):
-    try:
-        # Create the destination path by combining the directory and the new name
-        destination_path = os.path.join(os.path.dirname(source_path), new_name)
-
-        # Rename the file
-        shutil.move(source_path, destination_path)
-
-        print(f'Successfully renamed {source_path} to {destination_path}.')
     except Exception as e:
         print(f'An error occurred: {e}')
 
@@ -168,7 +161,6 @@ def excel_to_pdf_with_libreoffice(excel_file_path, output_pdf_name, soffice_path
 
 def pdf_to_pdf_exclude_pages(input_path, output_path, list_excluded_pages):
 
-    import PyPDF2
     
     with open(input_path, 'rb') as file:
         pdf_reader = PyPDF2.PdfReader(file)
