@@ -2,10 +2,10 @@
 print("MASTERFILE START")
 # Hard-coded values
 
-SOURCE_FILE_PATH = "workdata/2023'.xlsx"
+SOURCE_FILE_PATH = "2023'.xlsx"
 SOURCE_SHEET_NAME = "December 2023"
 
-TARGET_FILE_PATH = "workdata/North.xlsx"
+TARGET_FILE_PATH = "North.xlsx"
 TARGET_SHEET_NAME = "N-2 "
 
 SOURCE_START_ROW = 37
