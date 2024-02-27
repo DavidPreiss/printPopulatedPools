@@ -45,6 +45,14 @@ except ImportError as e:
     print("Installation complete. You can now run the script.")
     exit()
 
+try:
+    from datetime import datetime
+except ImportError as e:
+    print(f"Error: {e}\ndatetime is not installed. Installing...")
+    subprocess.check_call(["pip", "install", "datetime"])
+    print("Installation complete. You can now run the script.")
+    exit()
+
 def column_letter_to_number(column_letter):
     """
     Convert Excel-style column letters to column numbers.
@@ -349,11 +357,12 @@ def split_pdf_pages(input_pdf_path, output_paths):
             with open(output_file_path, 'wb') as output_file:
                 pdf_writer.write(output_file)
             
-            print(f"Created '{output_file_path}.pdf'")
+            #print(f"Created '{output_file_path}.pdf'")
         # If there are more pages in the input PDF, print a warning
         if len(pdf_reader.pages) > len(output_paths):
             print("Warning: Input PDF has more pages than elements in the output paths list. "
                   "Subsequent pages will be ignored.")
+    print(f"split_pdf_pages() END\n")
 
 
 # Convert column variables to integers if they are strings
@@ -388,6 +397,9 @@ if result is not None:
     pdf_to_pdf_exclude_pages(raw_pdf_path, FINAL_OUTPUT_PATH, list_excluded_pages)
 
     print(f"Created file: '{FINAL_OUTPUT_PATH}'")
+    
+    # Then split each page of that pdf into their own pdfs and label them
+    split_pdf_pages(raw_pdf_path, list_page_names)
 
     # print(f"list_page_names:\n{list_page_names}")
 else:
