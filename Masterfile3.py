@@ -317,6 +317,45 @@ def iterate_through_sheets(excel_file_path):
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
+def split_pdf_pages(input_pdf_path, output_paths):
+    # Check if the input PDF file exists
+    if not os.path.exists(input_pdf_path):
+        raise FileNotFoundError(f"Input PDF file not found: {input_pdf_path}")
+
+    # Open the input PDF file
+    with open(input_pdf_path, 'rb') as input_file:
+        # Create a PDF reader object
+        pdf_reader = PyPDF2.PdfReader(input_file)
+
+        # Check if the number of pages in the input PDF matches the number of output paths
+        if len(pdf_reader.pages) < len(output_paths):
+            raise ValueError("Input PDF has fewer pages than elements in the output paths list.")
+
+        # Create a folder with the current date and time as its name
+        current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+        output_folder = "split_pdf_pages_output_"+current_datetime
+        os.makedirs(output_folder)
+            
+        # Iterate through pages and corresponding output paths
+        for page_num, output_path in zip(range(len(output_paths)), output_paths):
+            # Create a new PDF writer object
+            pdf_writer = PyPDF2.PdfWriter()
+
+            # Add the current page to the new PDF writer
+            pdf_writer.add_page(pdf_reader.pages[page_num])
+
+            # Save the new PDF to the specified output path
+            output_file_path = os.path.join(output_folder, f"{output_path}.pdf")
+            with open(output_file_path, 'wb') as output_file:
+                pdf_writer.write(output_file)
+            
+            print(f"Created '{output_file_path}.pdf'")
+        # If there are more pages in the input PDF, print a warning
+        if len(pdf_reader.pages) > len(output_paths):
+            print("Warning: Input PDF has more pages than elements in the output paths list. "
+                  "Subsequent pages will be ignored.")
+
+
 # Convert column variables to integers if they are strings
 if isinstance(SOURCE_START_COLUMN, str):
     SOURCE_START_COLUMN = column_letter_to_number(SOURCE_START_COLUMN)
