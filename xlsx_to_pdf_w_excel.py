@@ -1,7 +1,7 @@
 import os
 import win32com.client
 
-def excel_to_pdf_with_excel(excel_file_path, output_pdf_name):
+def xlsx_to_pdf_with_excel(xlsx_file_path, output_pdf_name):
     try:
         # Ensure that the output PDF directory exists (current working directory)
         output_dir = os.getcwd()
@@ -13,10 +13,10 @@ def excel_to_pdf_with_excel(excel_file_path, output_pdf_name):
         excel_app.Visible = False
 
         # Open the Excel file
-        workbook = excel_app.Workbooks.Open(os.path.abspath(excel_file_path))
+        workbook = excel_app.Workbooks.Open(os.path.abspath(xlsx_file_path))
 
         # Create the full path for the output PDF
-        file_name = os.path.basename(excel_file_path)
+        file_name = os.path.basename(xlsx_file_path)
         file = os.path.splitext(file_name)
         output_pdf_path = os.path.join(output_dir, (file[0] + ".pdf"))
 
@@ -35,8 +35,8 @@ def excel_to_pdf_with_excel(excel_file_path, output_pdf_name):
         return None
 
 # Example usage
-excel_file_path = "North_temp.xlsx"
+xlsx_file_path = "North_temp.xlsx"
 output_pdf_name = "output.pdf"
-excel_to_pdf_with_excel(excel_file_path, output_pdf_name)
+xlsx_to_pdf_with_excel(xlsx_file_path, output_pdf_name)
 
 input("Press Enter to close...")
