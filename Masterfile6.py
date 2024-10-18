@@ -167,7 +167,9 @@ def find_empty_cells(file_path, sheet_to_check, columns_to_check, max_rows_to_ch
 
     for column in columns_to_check:
         print(f"checking column {str(column)} starting at row {str(start_row)} for a max of {max_rows_to_check} rows")
+        print(f"Attempting to open workbook {file_path} on sheet {sheet_to_check}")
         sheet = workbook[sheet_to_check]
+        print(f"Successfully opened workbook {file_path} on sheet {sheet_to_check}")
 
         for row_num in range(start_row, max_rows_to_check + start_row+1):
             cell_value = sheet.cell(row=row_num, column=column).value
