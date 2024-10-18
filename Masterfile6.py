@@ -188,7 +188,7 @@ def excel_to_pdf_with_libreoffice(excel_file_path, output_pdf_name):
         file = os.path.splitext(file_name)
         output_pdf_path = os.path.join(output_dir ,(file[0] + ".pdf"))
         
-        print(f"PDF created successfully: {output_pdf_path}")
+        print(f"PDF created with libre successfully: {output_pdf_path}")
 
         return output_pdf_path
 
@@ -222,7 +222,7 @@ def xlsx_to_pdf_with_excel(xlsx_file_path, output_pdf_name):
         workbook.Close(False)
         excel_app.Quit()
 
-        print(f"PDF created successfully: {output_pdf_path}")
+        print(f"PDF created with excel successfully: {output_pdf_path}")
         return output_pdf_path
 
     except Exception as e:
@@ -447,7 +447,7 @@ if result is not None:
     list_excluded_pages, list_page_names = result
 
     # Convert the .xlsx file to a pdf
-    print(f"Attempting to convert '{TEMP_TARGET_FILE_PATH}' into a pdf file")
+    print(f"Attempting to convert '{TEMP_TARGET_FILE_PATH}' into a pdf file with excel")
 
     # Provide the full path to the soffice executable
     raw_pdf_path = xlsx_to_pdf_with_excel(TEMP_TARGET_FILE_PATH, "Masterfile.pdf")
