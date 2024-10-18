@@ -83,6 +83,8 @@ def column_letter_to_number(column_letter):
 
 def copy_xlsx_file(source_path, destination_path):
     try:
+        
+        print(f'Attempting to copy {source_path} to {destination_path}.')
         shutil.copy2(source_path, destination_path)
         print(f'Successfully copied {source_path} to {destination_path}.')
     except Exception as e:
