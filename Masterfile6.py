@@ -85,6 +85,14 @@ def copy_xlsx_file(source_path, destination_path):
     try:
         
         print(f'Attempting to copy {source_path} to {destination_path}.')
+        
+        print(f"Current Working Directory: {os.getcwd()}")
+        if not os.access(source_path, os.R_OK):
+            print(f"Error: Cannot read {source_path}")
+        if not os.access(destination_path, os.W_OK):
+            print(f"Error: Cannot write to {destination_path}")
+
+
         shutil.copy2(source_path, destination_path)
         print(f'Successfully copied {source_path} to {destination_path}.')
     except Exception as e:
