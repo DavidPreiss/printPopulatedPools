@@ -81,7 +81,7 @@ def column_letter_to_number(column_letter):
         column_number = column_number * 26 + ord(char) - ord('A') + 1
     return column_number
 
-def copy_excel_file(source_path, destination_path):
+def copy_xlsx_file(source_path, destination_path):
     try:
         shutil.copy2(source_path, destination_path)
         print(f'Successfully copied {source_path} to {destination_path}.')
@@ -169,7 +169,7 @@ def find_empty_cells(file_path, sheet_to_check, columns_to_check, max_rows_to_ch
     workbook.close()
     return empty_rows
 
-def excel_to_pdf_with_libreoffice(excel_file_path, output_pdf_name):
+def xlsx_to_pdf_with_libreoffice(xlsx_file_path, output_pdf_name):
     try:
         # Ensure that the output PDF directory exists (current working directory)
         output_dir = os.getcwd()
@@ -180,11 +180,11 @@ def excel_to_pdf_with_libreoffice(excel_file_path, output_pdf_name):
         soffice_path = r"C:/Program Files/LibreOffice/program/soffice.exe"
 
         # Use subprocess to run LibreOffice in headless mode for conversion
-        subprocess.run([soffice_path, "--headless", "--convert-to", "pdf", "--outdir", output_dir, excel_file_path])
+        subprocess.run([soffice_path, "--headless", "--convert-to", "pdf", "--outdir", output_dir, xlsx_file_path])
         
         
         # Create the full path for the output PDF
-        file_name = os.path.basename(excel_file_path)
+        file_name = os.path.basename(xlsx_file_path)
         file = os.path.splitext(file_name)
         output_pdf_path = os.path.join(output_dir ,(file[0] + ".pdf"))
         
@@ -207,7 +207,7 @@ def xlsx_to_pdf_with_excel(xlsx_file_path, output_pdf_name):
         excel_app = win32com.client.Dispatch("Excel.Application")
         excel_app.Visible = False
 
-        # Open the Excel file
+        # Open the xlsx file
         workbook = excel_app.Workbooks.Open(os.path.abspath(xlsx_file_path))
 
         # Create the full path for the output PDF
@@ -286,15 +286,15 @@ def find_matching_cells(file_path, target_string, column_number):
     # print(f"HEY! matching_rows: {matching_rows}")
     return matching_rows[0] if matching_rows else None, content_list
 
-def iterate_through_sheets(excel_file_path):
+def iterate_through_sheets(xlsx_file_path):
 
     #iterates through sheets copying to TEMP_TARGET_FILE_PATH
     # returns list of excluded pages
     
-    print(f"\niterate_through_sheets({excel_file_path}) START")
+    print(f"\niterate_through_sheets({xlsx_file_path}) START")
     try:
-        # Load the Excel workbook
-        workbook = openpyxl.load_workbook(excel_file_path)
+        # Load the xlsx workbook
+        workbook = openpyxl.load_workbook(xlsx_file_path)
 
         # Get a list of sheet names
         sheet_names = workbook.sheetnames
@@ -331,12 +331,12 @@ def iterate_through_sheets(excel_file_path):
             print(f"And Paste into cells ({TARGET_START_ROW}, {TARGET_START_COLUMN}) "
                   f"to ({TARGET_START_ROW + (SOURCE_END_ROW - SOURCE_START_ROW)}, "
                   f"{TARGET_START_COLUMN + (SOURCE_END_COLUMN - SOURCE_START_COLUMN)}) "
-                  f"in '{excel_file_path}' sheet '{sheet_name}'")
+                  f"in '{xlsx_file_path}' sheet '{sheet_name}'")
 
             # Call copy_paste_cells with the converted values and global row values
             copy_paste_cells(SOURCE_FILE_PATH, SOURCE_SHEET_NAME, SOURCE_START_ROW, 
                              SOURCE_START_COLUMN, SOURCE_END_ROW, SOURCE_END_COLUMN, 
-                             excel_file_path, sheet_name, TARGET_START_ROW, TARGET_START_COLUMN)
+                             xlsx_file_path, sheet_name, TARGET_START_ROW, TARGET_START_COLUMN)
             
             # Find the rows that correspond to empty cells in the PH column
             print(f"Checking for empty cells in '{sheet_name}'")
@@ -363,10 +363,10 @@ def iterate_through_sheets(excel_file_path):
             total_previous_pages = total_previous_pages + len(result_content) + EXTRA_PAGES_PER_SHEET
         
         
-        # Close the Excel workbook
+        # Close the xlsx workbook
         workbook.close()
         
-        print(f"\n iterate_through_sheets({excel_file_path}) END\n")
+        print(f"\n iterate_through_sheets({xlsx_file_path}) END\n")
         # ret_list = []
         # ret_list.append(list_excluded_pages)
         # ret_list.append(list_page_names)
@@ -435,7 +435,7 @@ if isinstance(TARGET_START_COLUMN, str):
     TARGET_START_COLUMN = column_letter_to_number(TARGET_START_COLUMN)
 
 # Save Target File as a temp file for modification
-copy_excel_file(TARGET_FILE_PATH, TEMP_TARGET_FILE_PATH)
+copy_xlsx_file(TARGET_FILE_PATH, TEMP_TARGET_FILE_PATH)
 
 
 # iterate through the sheets of the file
