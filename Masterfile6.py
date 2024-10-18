@@ -444,6 +444,11 @@ if isinstance(SOURCE_END_COLUMN, str):
 if isinstance(TARGET_START_COLUMN, str):
     TARGET_START_COLUMN = column_letter_to_number(TARGET_START_COLUMN)
 
+
+# Change working directory to the script's directory
+script_dir = os.path.dirname(os.path.realpath(__file__))
+os.chdir(script_dir)
+
 # Save Target File as a temp file for modification
 copy_xlsx_file(TARGET_FILE_PATH, TEMP_TARGET_FILE_PATH)
 
