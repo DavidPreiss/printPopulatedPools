@@ -161,6 +161,8 @@ def find_empty_cells(file_path, sheet_to_check, columns_to_check, max_rows_to_ch
         workbook = openpyxl.load_workbook(file_path)
     except FileNotFoundError:
         raise FileNotFoundError(f"File not found: {file_path}")
+    except Exception as e:
+        print(f"An error occurred in find_empty_cells(): {str(e)}")
 
     empty_rows = []
     
