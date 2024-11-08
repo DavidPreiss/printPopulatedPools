@@ -6,8 +6,8 @@ SOURCE_FILE_PATH = "2023'.xlsx"
 SOURCE_SHEET_NAME = "December 2023"
 COL_OF_CODES = 2
 
-TARGET_FILE_PATH = "North2.xlsx"
-TARGET_SHEET_NAME = "N-2 "
+TARGET_FILE_PATH = "North - Copy.xlsx"
+#TARGET_SHEET_NAME = "N-2 "
 
 SOURCE_START_ROW = 37
 SOURCE_START_COLUMN = "G"
@@ -23,7 +23,7 @@ NUMBER_OF_ROWS_IN_N_2 = 36
 NUMBER_OF_ROWS_IN_N_3 = 26
 
 FINAL_OUTPUT_PATH = "MASTERFILE7_OUTPUT.pdf"
-TEMP_TARGET_FILE_PATH = "North_temp.xlsx"
+TEMP_TARGET_FILE_PATH = "painted_canvas.xlsx"
 EXTRA_PAGES_PER_SHEET = 3
 
 BNR_LOGO_IMAGE_PATH = "B&R_Logo.png"
@@ -408,7 +408,6 @@ def split_pdf_pages(input_pdf_path, output_paths):
             raise ValueError("Input PDF has fewer pages than elements in the output paths list.")
 
         # Create a folder with the current date and time as its name
-        current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_folder = "split_pdf_pages_output_"+current_datetime
         os.makedirs(output_folder)
             
@@ -456,9 +455,16 @@ if isinstance(TARGET_START_COLUMN, str):
 script_dir = os.path.dirname(os.path.realpath(__file__))
 os.chdir(script_dir)
 
+# Establish current_datetime
+current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+
+if os.path.exists(TEMP_TARGET_FILE_PATH):
+    os.remove(TEMP_TARGET_FILE_PATH)
 #Check if we're skipping the copy step
 if SKIP_COPY:
-    TEMP_TARGET_FILE_PATH = TARGET_FILE_PATH
+    os.rename(TARGET_FILE_PATH,TEMP_TARGET_FILE_PATH)
+    #TEMP_TARGET_FILE_PATH = TARGET_FILE_PATH
 else:
     # Save Target File as a temp file for modification
     copy_xlsx_file(TARGET_FILE_PATH, TEMP_TARGET_FILE_PATH)
@@ -497,6 +503,7 @@ if result is not None:
     # print(f"list_page_names:\n{list_page_names}")
 else:
     print("DAMN")
+
 # Prompt the user to press Enter before closing
 print("\nMASTERFILE7 END\n")
 input("Press Enter to close...")
