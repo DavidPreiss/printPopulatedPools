@@ -109,7 +109,7 @@ def copy_paste_cells(src_file_path, src_sheet_name, src_start_row, src_start_col
         
         # Check if source sheet exists, if not, use the active sheet
         if src_sheet_name not in src_wb.sheetnames:
-            print(f"Warning: Source sheet '{src_sheet_name}' not found.")
+            print(f"!--WARNING: Source sheet '{src_sheet_name}' not found.")
             print(f"Using active sheet '{src_wb.active}'")
             src_ws = src_wb.active
         else:
