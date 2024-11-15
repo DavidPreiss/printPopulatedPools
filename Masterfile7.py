@@ -3,17 +3,17 @@ print("\nMASTERFILE7 START\n")
 # Hard-coded values
 
 SOURCE_FILE_PATH = "2023'.xlsx"
-SOURCE_SHEET_NAME = "December 2023"
+SOURCE_SHEET_NAME = "December 2023" #will use active sheet if invalid
 COL_OF_CODES = 2
 
 TARGET_FILE_PATH = "North - Copy.xlsx"
 #TARGET_SHEET_NAME = "N-2 "
 
-SOURCE_START_ROW = 37
-SOURCE_START_COLUMN = "G"
+SOURCE_START_ROW = 37 #meaningless
+SOURCE_START_COLUMN = "G" #meaningless
 
-SOURCE_END_ROW = 72
-SOURCE_END_COLUMN = "AM"
+SOURCE_END_ROW = 72 #meaningless
+SOURCE_END_COLUMN = "AM" #meaningless
 
 TARGET_START_ROW = 10
 TARGET_START_COLUMN = "M"
@@ -24,7 +24,7 @@ TARGET_START_COLUMN = "M"
 
 FINAL_OUTPUT_PATH = "MASTERFILE7_OUTPUT.pdf"
 TEMP_TARGET_FILE_PATH = "painted_canvas.xlsx"
-EXTRA_PAGES_PER_SHEET = 3
+EXTRA_PAGES_PER_SHEET = 3 
 
 BNR_LOGO_IMAGE_PATH = "B&R_Logo.png"
 
@@ -339,8 +339,8 @@ def iterate_through_sheets(xlsx_file_path):
             SOURCE_END_ROW = SOURCE_START_ROW+ len(result_content)
             SOURCE_END_COLUMN = SOURCE_START_COLUMN+32
 
-            TARGET_START_ROW = 10
-            TARGET_START_COLUMN = column_letter_to_number("M")
+            TARGET_START_ROW = 10 #unneccessary
+            TARGET_START_COLUMN = column_letter_to_number("M") #unneccessary
             
             # Display information about the copy-paste operation
             print(f"Attempting to Copy cells ({SOURCE_START_ROW}, {SOURCE_START_COLUMN}) "
@@ -458,7 +458,10 @@ os.chdir(script_dir)
 # Establish current_datetime
 current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-
+if not os.path.exists(TARGET_FILE_PATH):
+    print(f"!--ERROR: No file named {TARGET_FILE_PATH} detected")
+    input("Press Enter to close...")
+    exit()
 if os.path.exists(TEMP_TARGET_FILE_PATH):
     os.remove(TEMP_TARGET_FILE_PATH)
 #Check if we're skipping the copy step
