@@ -14,6 +14,7 @@ COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1))
 
 TARGET_FILE_PATH = "North1 - Copy.xlsx"
 
+TARGET_COL_OF_CODES = 8
 TARGET_START_ROW = 10
 TARGET_START_COLUMN = "M"
 
@@ -301,7 +302,8 @@ def find_matching_cells(file_path, target_string, column_number):
 
 def iterate_through_sheets(xlsx_file_path):
 
-    #iterates through sheets copying to TEMP_TARGET_FILE_PATH
+    #iterates through sheets of xlsx_file_path
+    # Copying data from SOURCE_FILE_PATH to xlsx_file_path
     # returns list of excluded pages
     
     print(f"\niterate_through_sheets({xlsx_file_path}) START")
@@ -326,6 +328,22 @@ def iterate_through_sheets(xlsx_file_path):
             print(f"\nsheet: '{sheet}'")
             print(f"sheet_name: '{sheet_name}'")
             
+            #########################
+            #Find row# of target block
+            target_string = sheet_name
+            column_number = TARGET_COL_OF_CODES
+            print("hey")
+            for row_num in range(1, sheet.max_row + 1):
+                print(f"hey2 + {row_num}")
+                cell_value = sheet.cell(row=row_num, column=column_number).value
+                print(f"cell {row_num}: {cell_value}")
+                # Check if the cell is not empty or contains only spaces
+                if cell_value is not None and cell_value.strip() != "":
+                    # Remove spaces from both cell content and target string for comparison
+                    if cell_value.replace(" ", "") == target_string.replace(" ", ""):
+                        TARGET_START_ROW = row_num+1
+                        break
+            ########################
             # find row# of Sheet data
             result_row, result_content = find_matching_cells(SOURCE_FILE_PATH, sheet_name, COL_OF_CODES)
             
@@ -335,7 +353,7 @@ def iterate_through_sheets(xlsx_file_path):
             SOURCE_END_ROW = SOURCE_START_ROW+ len(result_content)
             SOURCE_END_COLUMN = SOURCE_START_COLUMN+BLOCK_WIDTH
 
-            TARGET_START_ROW = 10 #unneccessary
+            # TARGET_START_ROW = 10 #unneccessary
             TARGET_START_COLUMN = column_letter_to_number("M") #unneccessary
             
             # Display information about the copy-paste operation
@@ -439,6 +457,8 @@ def paste_image_into_pdf(input_pdf_path, input_image_path, x1, y1, Width, Height
     doc.save(output_pdf_path)
 
 # Convert column variables to integers if they are strings
+if isinstance(TARGET_COL_OF_CODES, str):
+    TARGET_START_COLUMN = column_letter_to_number(TARGET_COL_OF_CODES)
 if isinstance(TARGET_START_COLUMN, str):
     TARGET_START_COLUMN = column_letter_to_number(TARGET_START_COLUMN)
 
