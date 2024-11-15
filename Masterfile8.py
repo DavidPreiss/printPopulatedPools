@@ -6,6 +6,7 @@ print(f"\n{MY_NAME} START\n")
 SOURCE_FILE_PATH = "2023'.xlsx"
 SOURCE_SHEET_NAME = "December 2023" #will use active sheet if invalid
 COL_OF_CODES = 2
+BLOCK_WIDTH = 32
 
 TARGET_FILE_PATH = "North - Copy.xlsx"
 #TARGET_SHEET_NAME = "N-2 "
@@ -339,7 +340,7 @@ def iterate_through_sheets(xlsx_file_path):
             SOURCE_START_COLUMN = COL_OF_CODES+5
 
             SOURCE_END_ROW = SOURCE_START_ROW+ len(result_content)
-            SOURCE_END_COLUMN = SOURCE_START_COLUMN+32
+            SOURCE_END_COLUMN = SOURCE_START_COLUMN+BLOCK_WIDTH
 
             TARGET_START_ROW = 10 #unneccessary
             TARGET_START_COLUMN = column_letter_to_number("M") #unneccessary
