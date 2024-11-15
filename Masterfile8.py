@@ -15,12 +15,6 @@ COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1))
 TARGET_FILE_PATH = "North1 - Copy.xlsx"
 #TARGET_SHEET_NAME = "N-2 "
 
-SOURCE_START_ROW = 37 #meaningless
-SOURCE_START_COLUMN = "G" #meaningless
-
-SOURCE_END_ROW = 72 #meaningless
-SOURCE_END_COLUMN = "AM" #meaningless
-
 TARGET_START_ROW = 10
 TARGET_START_COLUMN = "M"
 
@@ -450,10 +444,6 @@ def paste_image_into_pdf(input_pdf_path, input_image_path, x1, y1, Width, Height
     doc.save(output_pdf_path)
 
 # Convert column variables to integers if they are strings
-if isinstance(SOURCE_START_COLUMN, str):
-    SOURCE_START_COLUMN = column_letter_to_number(SOURCE_START_COLUMN)
-if isinstance(SOURCE_END_COLUMN, str):
-    SOURCE_END_COLUMN = column_letter_to_number(SOURCE_END_COLUMN)
 if isinstance(TARGET_START_COLUMN, str):
     TARGET_START_COLUMN = column_letter_to_number(TARGET_START_COLUMN)
 
