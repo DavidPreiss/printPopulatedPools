@@ -1,0 +1,16 @@
+To Download the newest Version:
+
+Got to https://github.com/DavidPreiss/printPopulatedPools
+Click on the green button that says "Code"
+Click "download Zip" at the bottom
+it will download to your Downloads folder with the name "printPopulatedPools-main"
+it might have a number on the end if you have an older version already downloaded
+Open your Downloads Folder
+Drag the newest zipped folder to the Desktop
+Right Click the Zipped folder
+Click "Extract All"
+Click Next or Extract
+A New unzippped Folder with the same name should appear on the Desktop
+Open this folder
+Done!
+Feel free to Delete the zipped folder as well as the old folder
