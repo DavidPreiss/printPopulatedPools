@@ -2,13 +2,17 @@
 MY_NAME = "MASTERFILE8"
 print(f"\n{MY_NAME} START\n")
 # Hard-coded values
+WEEK_NUMBER = 2
 
 SOURCE_FILE_PATH = "2023'.xlsx"
 SOURCE_SHEET_NAME = "December 2023" #will use active sheet if invalid
-COL_OF_CODES = 2
-BLOCK_WIDTH = 32
 
-TARGET_FILE_PATH = "North - Copy.xlsx"
+BLOCK_OFFSET = 5
+JUMP_DISTANCE = 39 #Horizontal distance between weeks
+BLOCK_WIDTH = (JUMP_DISTANCE-2) - BLOCK_OFFSET
+COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1))
+
+TARGET_FILE_PATH = "North1 - Copy.xlsx"
 #TARGET_SHEET_NAME = "N-2 "
 
 SOURCE_START_ROW = 37 #meaningless
@@ -337,7 +341,7 @@ def iterate_through_sheets(xlsx_file_path):
             result_row, result_content = find_matching_cells(SOURCE_FILE_PATH, sheet_name, COL_OF_CODES)
             
             SOURCE_START_ROW = result_row + 1
-            SOURCE_START_COLUMN = COL_OF_CODES+5
+            SOURCE_START_COLUMN = COL_OF_CODES+BLOCK_OFFSET
 
             SOURCE_END_ROW = SOURCE_START_ROW+ len(result_content)
             SOURCE_END_COLUMN = SOURCE_START_COLUMN+BLOCK_WIDTH
