@@ -453,6 +453,9 @@ def paste_image_into_pdf(input_pdf_path, input_image_path, x1, y1, Width, Height
               )
     doc.save(output_pdf_path)
 
+def user_input():
+    print("Hello!")
+    print(f"test!")
 # Convert column variables to integers if they are strings
 if isinstance(TARGET_COL_OF_CODES, str):
     TARGET_START_COLUMN = column_letter_to_number(TARGET_COL_OF_CODES)
@@ -471,8 +474,12 @@ if not os.path.exists(TARGET_FILE_PATH):
     print(f"!--ERROR: No file named {TARGET_FILE_PATH} detected")
     input("Press Enter to close...")
     exit()
+
+user_input()
+
 if os.path.exists(TEMP_TARGET_FILE_PATH):
     os.remove(TEMP_TARGET_FILE_PATH)
+
 #Check if we're skipping the copy step
 if SKIP_COPY:
     os.rename(TARGET_FILE_PATH,TEMP_TARGET_FILE_PATH)
