@@ -332,11 +332,8 @@ def iterate_through_sheets(xlsx_file_path):
             #Find row# of target block
             target_string = sheet_name
             column_number = TARGET_COL_OF_CODES
-            # print("hey") # debugging
             for row_num in range(1, sheet.max_row + 1):
-                # print(f"hey2 + {row_num}") # debugging
                 cell_value = sheet.cell(row=row_num, column=column_number).value
-                # print(f"cell {row_num}: {cell_value}") # debugging
                 # Check if the cell is not empty or contains only spaces
                 if cell_value is not None and cell_value.strip() != "":
                     # Remove spaces from both cell content and target string for comparison
