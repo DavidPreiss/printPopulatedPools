@@ -459,11 +459,39 @@ def user_input():
     print(f"SOURCE_SHEET_NAME:\t {SOURCE_SHEET_NAME}")
     print(f"WEEK_NUMBER:\t\t {WEEK_NUMBER}")
     print(f"TARGET_FILE_PATH:\t {TARGET_FILE_PATH}")
-    retval = input("type 'x' to exit:\t")
+    retval = input("type 'c' to change 'x' to exit:\t")
     if retval == "x":
         input("Press Enter to close...")
         exit()
+    if retval == "c":
+        change_values()
+
+def change_values():
+    global SOURCE_FILE_PATH, SOURCE_SHEET_NAME, WEEK_NUMBER, TARGET_FILE_PATH
+    print(f"put nothing to leave as is")
+    tempval = input("SOURCE_FILE_PATH :\t")
+    if tempval.strip() != "":
+        SOURCE_FILE_PATH = tempval
+        print(f"SOURCE_FILE_PATH: {SOURCE_FILE_PATH}")
     
+    tempval = input("SOURCE_SHEET_NAME :\t")
+    if tempval.strip() != "":
+        SOURCE_SHEET_NAME = tempval
+        print(f"SOURCE_SHEET_NAME: {SOURCE_SHEET_NAME}")
+    
+    tempval = input("WEEK_NUMBER :\t\t")
+    if tempval.strip() != "":
+        WEEK_NUMBER = tempval
+        print(f"WEEK_NUMBER: {WEEK_NUMBER}")
+    
+    tempval = input("TARGET_FILE_PATH :\t")
+    if tempval.strip() != "":
+        TARGET_FILE_PATH = tempval
+        print(f"TARGET_FILE_PATH: {TARGET_FILE_PATH}")
+    
+    user_input()
+
+
 # Convert column variables to integers if they are strings
 if isinstance(TARGET_COL_OF_CODES, str):
     TARGET_START_COLUMN = column_letter_to_number(TARGET_COL_OF_CODES)
