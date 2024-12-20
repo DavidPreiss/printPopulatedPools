@@ -25,6 +25,7 @@ EXTRA_PAGES_PER_SHEET = 3
 BNR_LOGO_IMAGE_PATH = "B&R_Logo.png"
 
 SKIP_COPY = True
+CLEAR_OLD = True
 #set to true if you don't mind directly modifying TARGET_FILE_PATH
 
 import shutil
@@ -280,9 +281,9 @@ def find_matching_cells(file_path, target_string, column_number):
         # Check if the cell is not empty or contains only spaces
         if cell_value is not None and cell_value.strip() != "":
             # Remove spaces from both cell content and target string for comparison
-            if cell_value.replace(" ", "") == target_string.replace(" ", ""):
+            if cell_value.replace(' ', '') == target_string.replace(' ', ''):
                 matching_rows.append(row_num)
-                print(f"Match found for '{target_string.replace(" ", "")}' at row {row_num}, column {column_number}")
+                print(f"Match found for '{target_string.replace(' ', '')}' at row {row_num}, column {column_number}")
 
                 # Collect content from cells underneath until an empty cell or a cell with only spaces is encountered
                 next_row = row_num + 1
@@ -337,7 +338,7 @@ def iterate_through_sheets(xlsx_file_path):
                 # Check if the cell is not empty or contains only spaces
                 if cell_value is not None and cell_value.strip() != "":
                     # Remove spaces from both cell content and target string for comparison
-                    if cell_value.replace(" ", "") == target_string.replace(" ", ""):
+                    if cell_value.replace(' ', '') == target_string.replace(' ', ''):
                         TARGET_START_ROW = row_num+1
                         break
             ########################
@@ -515,7 +516,7 @@ if not os.path.exists(TARGET_FILE_PATH):
     exit()
 
 
-if os.path.exists(TEMP_TARGET_FILE_PATH):
+if os.path.exists(TEMP_TARGET_FILE_PATH) and CLEAR_OLD:
     os.remove(TEMP_TARGET_FILE_PATH)
 
 #Check if we're skipping the copy step
