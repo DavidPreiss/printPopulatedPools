@@ -484,23 +484,23 @@ def user_input():
 def change_values():
     global SOURCE_FILE_PATH, SOURCE_SHEET_NAME, WEEK_NUMBER, COL_OF_CODES, TARGET_FILE_PATH
     print(f"put nothing to leave as is")
-    tempval = input("SOURCE_FILE_PATH :\t")
+    tempval = input("SOURCE_FILE_PATH:\t")
     if tempval.strip() != "":
         SOURCE_FILE_PATH = tempval
         print(f"SOURCE_FILE_PATH: {SOURCE_FILE_PATH}")
     
-    tempval = input("SOURCE_SHEET_NAME :\t")
+    tempval = input("SOURCE_SHEET_NAME:\t")
     if tempval.strip() != "":
         SOURCE_SHEET_NAME = tempval
         print(f"SOURCE_SHEET_NAME: {SOURCE_SHEET_NAME}")
     
-    tempval = input("WEEK_NUMBER :\t\t")
+    tempval = input("WEEK_NUMBER:\t\t")
     if tempval.strip() != "":
         WEEK_NUMBER = int(tempval)
         COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1)) #Do not touch
         print(f"WEEK_NUMBER: {WEEK_NUMBER}")
     
-    tempval = input("TARGET_FILE_PATH :\t")
+    tempval = input("TARGET_FILE_PATH:\t")
     if tempval.strip() != "":
         TARGET_FILE_PATH = tempval
         print(f"TARGET_FILE_PATH: {TARGET_FILE_PATH}")
@@ -582,12 +582,12 @@ else:
 
 
 
-print(f"WEEK_NUMBER: {WEEK_NUMBER}") # DEBUG
-print(f"COL_OF_CODES: {COL_OF_CODES}") # DEBUG
-debugretval = input("'x' to exit:\t")
-if debugretval == "x":
-    input("Press Enter to close...")
-    exit()
+# print(f"WEEK_NUMBER: {WEEK_NUMBER}") # DEBUG
+# print(f"COL_OF_CODES: {COL_OF_CODES}") # DEBUG
+# debugretval = input("'x' to exit:\t")
+# if debugretval == "x":
+    # input("Press Enter to close...")
+    # exit()
 
 # iterate through the sheets of the file
 result = iterate_through_sheets(TEMP_TARGET_FILE_PATH)
