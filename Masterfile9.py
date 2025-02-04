@@ -1,7 +1,18 @@
-#Created by David Preiss
+# Created by David Preiss
+
+# TABLE OF CONTENTS:
+#   Intro
+#   Hard-Coded Values
+#   Import Statments
+#   Function Definitions
+#   Main Code
+#   Outro
+
+#   Intro
 MY_NAME = "MASTERFILE9"
 print(f"\n{MY_NAME} START\n")
-# Hard-coded values
+
+#   Hard-Coded Values
 WEEK_NUMBER = 2
 
 SOURCE_FILE_PATH = "2023'.xlsx"
@@ -9,8 +20,8 @@ SOURCE_SHEET_NAME = "December 2023" #will use active sheet if invalid
 
 BLOCK_OFFSET = 5
 JUMP_DISTANCE = 39 #Horizontal distance between weeks
-BLOCK_WIDTH = (JUMP_DISTANCE-2) - BLOCK_OFFSET
-COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1))
+BLOCK_WIDTH = (JUMP_DISTANCE-2) - BLOCK_OFFSET #Do not touch
+COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1)) #Do not touch
 
 TARGET_FILE_PATH = "North - Copy.xlsx"
 
@@ -28,6 +39,7 @@ SKIP_COPY = True
 CLEAR_OLD = True
 #set to true if you don't mind directly modifying TARGET_FILE_PATH
 
+#   Import Statments
 import shutil
 import os
 import subprocess
@@ -71,6 +83,7 @@ except ImportError as e:
     print("Installation complete. You can now run the script.")
     exit()
 
+#   Function Definitions
 def column_letter_to_number(column_letter):
     """
     Convert Excel-style column letters to column numbers.
@@ -492,6 +505,7 @@ def change_values():
     
     user_input()
 
+#   Main Code
 
 # Convert column variables to integers if they are strings
 if isinstance(TARGET_COL_OF_CODES, str):
@@ -507,15 +521,32 @@ os.chdir(script_dir)
 # Establish current_datetime
 current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
 
+# EXPLANATION:
+# okay heres where the program starts for real
+# There's 3 important functions that happen first
+#   user_input(), copy_xlsx_file(), xlsx_to_pdf_with_excel()
+# And 3 less-important functions that happen afterwards
+#   paste_image_into_pdf(), pdf_to_pdf_exclude_pages(),split_pdf_pages()
+#
+# user_input()              displays and allows alteration of the intial values
+# copy_xlsx_file()          uses those values to copy from source xlsx file to target xlsx file
+# xlsx_to_pdf_with_excel()  converts the target xlsx file to a printable pdf
+#
+# paste_image_into_pdf()    handles issues with image conversion (needs work)
+# pdf_to_pdf_exclude_pages()recreates the pdf to exclude invalid/blank info 
+# split_pdf_pages()         splits the pdf into multiple single-page pdfs in a folder
 
+
+# Display Values to User and let them be altered
 user_input()
 
+# Ensure TFP exists, exit if not
 if not os.path.exists(TARGET_FILE_PATH):
     print(f"!--ERROR: No file named {TARGET_FILE_PATH} detected")
     input("Press Enter to close...")
     exit()
 
-
+# Clear Temp_TFP from previous run
 if os.path.exists(TEMP_TARGET_FILE_PATH) and CLEAR_OLD:
     os.remove(TEMP_TARGET_FILE_PATH)
 
@@ -561,6 +592,8 @@ if result is not None:
     # print(f"list_page_names:\n{list_page_names}")
 else:
     print("DAMN")
+
+#   Outro
 
 # Prompt the user to press Enter before closing
 print(f"\n{MY_NAME} END\n")
