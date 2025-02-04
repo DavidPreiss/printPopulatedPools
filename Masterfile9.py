@@ -13,7 +13,7 @@ MY_NAME = "MASTERFILE9"
 print(f"\n{MY_NAME} START\n")
 
 #   Hard-Coded Values
-WEEK_NUMBER = 2
+WEEK_NUMBER = 1
 
 SOURCE_FILE_PATH = "2023'.xlsx"
 SOURCE_SHEET_NAME = "December 2023" #will use active sheet if invalid
@@ -35,6 +35,7 @@ EXTRA_PAGES_PER_SHEET = 3
 
 BNR_LOGO_IMAGE_PATH = "B&R_Logo.png"
 
+SIMPLE_WAY = True #if true, following 2 dont matter
 SKIP_COPY = True
 CLEAR_OLD = True
 #set to true if you don't mind directly modifying TARGET_FILE_PATH
@@ -468,7 +469,7 @@ def paste_image_into_pdf(input_pdf_path, input_image_path, x1, y1, Width, Height
     doc.save(output_pdf_path)
 
 def user_input():
-    print("Hello!")
+    print("\n\t Hello!")
     print(f"SOURCE_FILE_PATH:\t {SOURCE_FILE_PATH}")
     print(f"SOURCE_SHEET_NAME:\t {SOURCE_SHEET_NAME}")
     print(f"WEEK_NUMBER:\t\t {WEEK_NUMBER}")
@@ -481,7 +482,7 @@ def user_input():
         change_values()
 
 def change_values():
-    global SOURCE_FILE_PATH, SOURCE_SHEET_NAME, WEEK_NUMBER, TARGET_FILE_PATH
+    global SOURCE_FILE_PATH, SOURCE_SHEET_NAME, WEEK_NUMBER, COL_OF_CODES, TARGET_FILE_PATH
     print(f"put nothing to leave as is")
     tempval = input("SOURCE_FILE_PATH :\t")
     if tempval.strip() != "":
@@ -495,7 +496,8 @@ def change_values():
     
     tempval = input("WEEK_NUMBER :\t\t")
     if tempval.strip() != "":
-        WEEK_NUMBER = tempval
+        WEEK_NUMBER = int(tempval)
+        COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1)) #Do not touch
         print(f"WEEK_NUMBER: {WEEK_NUMBER}")
     
     tempval = input("TARGET_FILE_PATH :\t")
@@ -529,10 +531,10 @@ current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
 #   paste_image_into_pdf(), pdf_to_pdf_exclude_pages(),split_pdf_pages()
 #
 # user_input()              displays and allows alteration of the intial values
-# copy_xlsx_file()          uses those values to copy from source xlsx file to target xlsx file
+# iterate_through_sheets()  uses those values to copy from source xlsx file to target xlsx file
 # xlsx_to_pdf_with_excel()  converts the target xlsx file to a printable pdf
 #
-# paste_image_into_pdf()    handles issues with image conversion (needs work)
+# paste_image_into_pdf()    handles issues with image conversion (might need work)
 # pdf_to_pdf_exclude_pages()recreates the pdf to exclude invalid/blank info 
 # split_pdf_pages()         splits the pdf into multiple single-page pdfs in a folder
 
@@ -540,27 +542,54 @@ current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
 # Display Values to User and let them be altered
 user_input()
 
+
 # Ensure TFP exists, exit if not
 if not os.path.exists(TARGET_FILE_PATH):
     print(f"!--ERROR: No file named {TARGET_FILE_PATH} detected")
     input("Press Enter to close...")
     exit()
 
-# Clear Temp_TFP from previous run
-if os.path.exists(TEMP_TARGET_FILE_PATH) and CLEAR_OLD:
-    os.remove(TEMP_TARGET_FILE_PATH)
 
-#Check if we're skipping the copy step
-if SKIP_COPY:
-    os.rename(TARGET_FILE_PATH,TEMP_TARGET_FILE_PATH)
-    #TEMP_TARGET_FILE_PATH = TARGET_FILE_PATH
+# EXPLANATION:
+# okay heres some weird shuffling im doing between the first 2 functions
+# it might be completely unneccessary
+# what currently happens is that
+# a brand new xlsx file is created before the code runs as a copy of the real file
+# this brand new xlsx file set as the TFP
+# the code checks for a file named after the temp_TFP and deletes it
+# then renames the TFP to the temp_TFP                              ^
+# the code copies into the temp_TFP                                 |
+# this file gets detected and deleted the next time the code runs   |
+
+# I need to test the code just using the TFP instead of the temp_TFP
+# that way a new xlsx file doesnt need to be created each time
+# instead of any of the code here, id just have TEMP_TARGET_FILE_PATH = TARGET_FILE_PATH
+
+if SIMPLE_WAY:
+    TEMP_TARGET_FILE_PATH = TARGET_FILE_PATH
 else:
-    # Save Target File as a temp file for modification
-    copy_xlsx_file(TARGET_FILE_PATH, TEMP_TARGET_FILE_PATH)
+    # Clear Temp_TFP from previous run
+    if os.path.exists(TEMP_TARGET_FILE_PATH) and CLEAR_OLD:
+        os.remove(TEMP_TARGET_FILE_PATH)
 
+    #Check if we're skipping the copy step
+    if SKIP_COPY:
+        os.rename(TARGET_FILE_PATH,TEMP_TARGET_FILE_PATH)
+        #TEMP_TARGET_FILE_PATH = TARGET_FILE_PATH
+    else:
+        # Save Target File as a temp file for modification
+        copy_xlsx_file(TARGET_FILE_PATH, TEMP_TARGET_FILE_PATH)
+
+
+
+print(f"WEEK_NUMBER: {WEEK_NUMBER}") # DEBUG
+print(f"COL_OF_CODES: {COL_OF_CODES}") # DEBUG
+debugretval = input("'x' to exit:\t")
+if debugretval == "x":
+    input("Press Enter to close...")
+    exit()
 
 # iterate through the sheets of the file
-
 result = iterate_through_sheets(TEMP_TARGET_FILE_PATH)
 print("\n All Sheets Read")
 if result is not None:
