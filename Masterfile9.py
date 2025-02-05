@@ -1,29 +1,30 @@
 # Created by David Preiss
 
-# TABLE OF CONTENTS:
-#   Intro
-#   Hard-Coded Values
-#   Import Statments
-#   Function Definitions
-#   Main Code
-#   Outro
+### TABLE OF CONTENTS:
+#   --Intro
+#   --Hard-Coded Values
+#   --Import Statements
+#   --Function Definitions
+#   --Main Code
+#   --Outro
 
-#   Intro
+#   --Intro
 MY_NAME = "MASTERFILE9"
 print(f"\n{MY_NAME} START\n")
 
-#   Hard-Coded Values
+###   --Hard-Coded Values
+
 WEEK_NUMBER = 1
 
-SOURCE_FILE_PATH = "2023'.xlsx"
-SOURCE_SHEET_NAME = "December 2023" #will use active sheet if invalid
+SOURCE_FILE_PATH = "2024'.xlsx"
+SOURCE_SHEET_NAME = "December 2024" #will use active sheet if invalid
 
 BLOCK_OFFSET = 5
 JUMP_DISTANCE = 39 #Horizontal distance between weeks
 BLOCK_WIDTH = (JUMP_DISTANCE-2) - BLOCK_OFFSET #Do not touch
 COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1)) #Do not touch
 
-TARGET_FILE_PATH = "North - Copy.xlsx"
+TARGET_FILE_PATH = "Service.xlsx"
 
 TARGET_COL_OF_CODES = 8
 TARGET_START_ROW = 10
@@ -40,9 +41,28 @@ SKIP_COPY = True
 CLEAR_OLD = True
 #set to true if you don't mind directly modifying TARGET_FILE_PATH
 
-#   Import Statments
+###   --Import Statements
+
 import shutil
 import os
+
+# System call
+os.system("")
+
+# Class of different styles
+class style():
+    BLACK = '\033[30m'
+    RED = '\033[31m'
+    GREEN = '\033[32m'
+    YELLOW = '\033[33m'
+    BLUE = '\033[34m'
+    MAGENTA = '\033[35m'
+    CYAN = '\033[36m'
+    WHITE = '\033[37m'
+    UNDERLINE = '\033[4m'
+    RESET = '\033[0m'
+
+# print(style.GREEN + f"Hello, World! {WEEK_NUMBER}" + style.RESET) #debug
 import subprocess
 
 try:
@@ -84,7 +104,8 @@ except ImportError as e:
     print("Installation complete. You can now run the script.")
     exit()
 
-#   Function Definitions
+###   --Function Definitions
+
 def column_letter_to_number(column_letter):
     """
     Convert Excel-style column letters to column numbers.
@@ -120,7 +141,7 @@ def copy_paste_cells(src_file_path, src_sheet_name, src_start_row, src_start_col
         
         # Check if source sheet exists, if not, use the active sheet
         if src_sheet_name not in src_wb.sheetnames:
-            print(f"!--WARNING: Source sheet '{src_sheet_name}' not found.")
+            print(style.YELLOW + f"!--WARNING: Source sheet '{src_sheet_name}' not found." + style.RESET)
             print(f"Using active sheet '{src_wb.active}'")
             src_ws = src_wb.active
         else:
@@ -137,7 +158,7 @@ def copy_paste_cells(src_file_path, src_sheet_name, src_start_row, src_start_col
             
             # Check if target sheet exists, if not, use the active sheet
             if target_sheet_name not in target_wb.sheetnames:
-                print(f"Warning: Target sheet '{target_sheet_name}' not found.")
+                print(style.YELLOW + f"!--WARNING: Target sheet '{target_sheet_name}' not found." + style.RESET)
                 print(f"Using active sheet '{target_wb.active}'")
                 target_ws = target_wb.active
             else:
@@ -188,6 +209,11 @@ def find_empty_cells(file_path, sheet_to_check, columns_to_check, max_rows_to_ch
         print(f"Successfully opened workbook {file_path} on sheet {sheet_to_check}")
 
         for row_num in range(start_row, max_rows_to_check + start_row+1):
+            
+            cell_value = sheet.cell(row=row_num, column=TARGET_COL_OF_CODES).value
+            if cell_value is None or cell_value == "":
+                break # catches overrun
+            
             cell_value = sheet.cell(row=row_num, column=column).value
 
             if cell_value is None or cell_value == "":
@@ -288,7 +314,7 @@ def find_matching_cells(file_path, target_string, column_number):
     content_list = []
 
     sheet = workbook.active
-
+    MatchFound = False
     for row_num in range(1, sheet.max_row + 1):
         cell_value = sheet.cell(row=row_num, column=column_number).value
 
@@ -317,7 +343,7 @@ def find_matching_cells(file_path, target_string, column_number):
 
 def iterate_through_sheets(xlsx_file_path):
 
-    #iterates through sheets of xlsx_file_path
+    # iterates through sheets of xlsx_file_path
     # Copying data from SOURCE_FILE_PATH to xlsx_file_path
     # returns list of excluded pages
     
@@ -344,8 +370,8 @@ def iterate_through_sheets(xlsx_file_path):
             print(f"sheet_name: '{sheet_name}'")
             
             #########################
-            #Find row# of target block
-            target_string = sheet_name
+            #Find row# of target block in target file
+            target_string = sheet_name # could be "Lab ID #" have row_num+2
             column_number = TARGET_COL_OF_CODES
             for row_num in range(1, sheet.max_row + 1):
                 cell_value = sheet.cell(row=row_num, column=column_number).value
@@ -353,12 +379,15 @@ def iterate_through_sheets(xlsx_file_path):
                 if cell_value is not None and cell_value.strip() != "":
                     # Remove spaces from both cell content and target string for comparison
                     if cell_value.replace(' ', '') == target_string.replace(' ', ''):
-                        TARGET_START_ROW = row_num+1
+                        TARGET_START_ROW = row_num+1 # row_num+2
                         break
             ########################
             # find row# of Sheet data
             result_row, result_content = find_matching_cells(SOURCE_FILE_PATH, sheet_name, COL_OF_CODES)
-            
+            if result_row == None:
+                print(style.YELLOW + f"!--WARNING: Match NOT Found for {sheet_name} in {SOURCE_FILE_PATH}" + style.RESET)
+                
+                continue
             SOURCE_START_ROW = result_row + 1
             SOURCE_START_COLUMN = COL_OF_CODES+BLOCK_OFFSET
 
@@ -380,7 +409,7 @@ def iterate_through_sheets(xlsx_file_path):
             copy_paste_cells(SOURCE_FILE_PATH, SOURCE_SHEET_NAME, SOURCE_START_ROW, 
                              SOURCE_START_COLUMN, SOURCE_END_ROW, SOURCE_END_COLUMN, 
                              xlsx_file_path, sheet_name, TARGET_START_ROW, TARGET_START_COLUMN)
-            
+        
             # Find the rows that correspond to empty cells in the PH column
             print(f"Checking for empty cells in '{sheet_name}'")
             list_columns_to_check = [TARGET_START_COLUMN] #change this number to change the cloumn checked
@@ -388,10 +417,10 @@ def iterate_through_sheets(xlsx_file_path):
             print(f"Empty rows:{list_empty_rows}")
             
             
-            # print(f" result_content: {result_content}")
+            # print(f" result_content: {result_content}") # debug
             print(f"Adding result_content to list_page_names")
             # Check if result_content is not None before extending list_page_names
-            if result_content is not None:
+            if result_content is not None and len(result_content)!=0:
                 list_page_names.extend(result_content)
             else:
                 print("Result content is None. Skipping extension of list_page_names.")
@@ -401,10 +430,10 @@ def iterate_through_sheets(xlsx_file_path):
             #print(f"list_empty_rows: {list_empty_rows}")
             for row in list_empty_rows:
                 list_excluded_pages.append(row + total_previous_pages)
-            #print(f"The excluded pages list is: '{list_excluded_pages}'")
+            # print(f"The excluded pages list is: '{list_excluded_pages}'") # debug
             
             total_previous_pages = total_previous_pages + len(result_content) + EXTRA_PAGES_PER_SHEET
-        
+            # print(f"The total_previous_pages is: '{total_previous_pages}'") # debug
         
         # Close the xlsx workbook
         workbook.close()
@@ -453,8 +482,11 @@ def split_pdf_pages(input_pdf_path, output_paths):
             #print(f"Created '{output_file_path}.pdf'")
         # If there are more pages in the input PDF, print a warning
         if len(pdf_reader.pages) > len(output_paths):
-            print("Warning: Input PDF has more pages than elements in the output paths list. "
-                  "Subsequent pages will be ignored.")
+            print(style.YELLOW + "!--WARNING: Input PDF has more pages than elements in the output paths list. "
+                  "Subsequent pages will be ignored." + style.RESET)
+            #for ii in range(len(pdf_reader.pages)):
+                #print(pdf_reader.pages[ii] + "\t\t" + output_paths[ii])
+            
     print(f"split_pdf_pages() END\n")
 
 def paste_image_into_pdf(input_pdf_path, input_image_path, x1, y1, Width, Height, output_pdf_path):
@@ -507,7 +539,7 @@ def change_values():
     
     user_input()
 
-#   Main Code
+###   --Main Code
 
 # Convert column variables to integers if they are strings
 if isinstance(TARGET_COL_OF_CODES, str):
@@ -580,15 +612,6 @@ else:
         # Save Target File as a temp file for modification
         copy_xlsx_file(TARGET_FILE_PATH, TEMP_TARGET_FILE_PATH)
 
-
-
-# print(f"WEEK_NUMBER: {WEEK_NUMBER}") # DEBUG
-# print(f"COL_OF_CODES: {COL_OF_CODES}") # DEBUG
-# debugretval = input("'x' to exit:\t")
-# if debugretval == "x":
-    # input("Press Enter to close...")
-    # exit()
-
 # iterate through the sheets of the file
 result = iterate_through_sheets(TEMP_TARGET_FILE_PATH)
 print("\n All Sheets Read")
@@ -615,15 +638,30 @@ if result is not None:
 
     print(f"Created file: '{FINAL_OUTPUT_PATH}'")
     
+    
     # Then split each page of that pdf into their own pdfs and label them
-    split_pdf_pages(image_pdf_path, list_page_names)
-
-    # print(f"list_page_names:\n{list_page_names}")
+    #split_pdf_pages(image_pdf_path, list_page_names) # not needed
+    
+    # okay i have a list of pages names,
+    # and a list of integers that are indexes to be deleted from the first list
+    
+    # print(f"list_page_names:\n{list_page_names}") # debug
+    # print(f"list_excluded_pages:\n{list_excluded_pages}") # debug
+    
+    exclude_counter = len(list_excluded_pages)
+    while exclude_counter > 0:
+        exclude_counter = exclude_counter-1
+        del list_page_names[list_excluded_pages[exclude_counter]]
+    
+    # print(f"list_page_names:\n{list_page_names}") # debug
+    
+    # Then split each page of that pdf into their own pdfs and label them
+    split_pdf_pages(FINAL_OUTPUT_PATH, list_page_names)
 else:
-    print("DAMN")
+    print(style.RED + "DAMN" + style.RESET)
 
-#   Outro
+###   --Outro
 
-# Prompt the user to press Enter before closing
 print(f"\n{MY_NAME} END\n")
+# Prompt the user to press Enter before closing
 input("Press Enter to close...")
