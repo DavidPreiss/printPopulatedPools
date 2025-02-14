@@ -35,6 +35,7 @@ TEMP_TARGET_FILE_PATH = "painted_canvas.xlsx"
 EXTRA_PAGES_PER_SHEET = 3 
 
 BNR_LOGO_IMAGE_PATH = "B&R_Logo.png"
+SIGNATURE_IMAGE_PATH = "Signature_AndreSmith.png"
 
 SIMPLE_WAY = True #if true, following 2 dont matter
 SKIP_COPY = True
@@ -629,12 +630,17 @@ if result is not None:
     
     #Add pictures to the raw pdf
     print(f"Adding images...")
-    image_pdf_path = "image_"+os.path.basename(raw_pdf_path)
-    print(f"image_pdf_path: {image_pdf_path}")
+    
+    image_pdf_path = "Logo_"+os.path.basename(raw_pdf_path)
     paste_image_into_pdf(raw_pdf_path, BNR_LOGO_IMAGE_PATH, 40, 0, 145, 145, image_pdf_path)
-
+    print(f"Added Logo: {image_pdf_path}")
+    
+    image_pdf_path2 = "Signature_"+os.path.basename(raw_pdf_path)
+    paste_image_into_pdf(image_pdf_path, SIGNATURE_IMAGE_PATH, 250, 540, 500, 700, image_pdf_path2)
+    print(f"Added Signature: {image_pdf_path2}")
+    
     #Then convert the pdf file into one that doesnt have the excluded pages
-    pdf_to_pdf_exclude_pages(image_pdf_path, FINAL_OUTPUT_PATH, list_excluded_pages)
+    pdf_to_pdf_exclude_pages(image_pdf_path2, FINAL_OUTPUT_PATH, list_excluded_pages)
 
     print(f"Created file: '{FINAL_OUTPUT_PATH}'")
     
