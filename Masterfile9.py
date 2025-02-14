@@ -69,14 +69,14 @@ import subprocess
 try:
     import openpyxl
 except ImportError as e:
-    print(f"!--ERROR:{e}\nopenpyxl is not installed. Installing...")
+    print(style.RED + f"!--ERROR:{e}\nopenpyxl is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "openpyxl"])
     print("Installation complete. You can now run the script.")
     exit()
 try:
     import PyPDF2
 except ImportError as e:
-    print(f"!--ERROR:{e}\nPyPDF2 is not installed. Installing...")
+    print(style.RED + f"!--ERROR:{e}\nPyPDF2 is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "PyPDF2"])
     print("Installation complete. You can now run the script.")
     exit()
@@ -84,7 +84,7 @@ except ImportError as e:
 try:
     from datetime import datetime
 except ImportError as e:
-    print(f"!--ERROR:{e}\ndatetime is not installed. Installing...")
+    print(style.RED + f"!--ERROR:{e}\ndatetime is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "datetime"])
     print("Installation complete. You can now run the script.")
     exit()
@@ -92,7 +92,7 @@ except ImportError as e:
 try:
     import fitz
 except ImportError as e:
-    print(f"!--ERROR:{e}\nPyMuPDF is not installed. Installing...")
+    print(style.RED + f"!--ERROR:{e}\nPyMuPDF is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "PyMuPDF"])
     print("Installation complete. You can now run the script.")
     exit()
@@ -100,7 +100,7 @@ except ImportError as e:
 try:
     import win32com.client
 except ImportError as e:
-    print(f"!--ERROR:{e}\nwin32com is not installed. Installing...")
+    print(style.RED + f"!--ERROR:{e}\nwin32com is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "pywin32"])
     print("Installation complete. You can now run the script.")
     exit()
@@ -124,15 +124,15 @@ def copy_xlsx_file(source_path, destination_path):
         
         print(f"Current Working Directory: {os.getcwd()}")
         if not os.access(source_path, os.R_OK):
-            print(f"!--ERROR: Cannot read {source_path}")
+            print(style.RED + f"!--ERROR: Cannot read {source_path}" + style.RESET)
         if not os.access(destination_path, os.W_OK):
-            print(f"!--ERROR: Cannot write to {destination_path}")
+            print(style.RED + f"!--ERROR: Cannot write to {destination_path}" + style.RESET)
 
 
         shutil.copy2(source_path, destination_path)
         print(f'Successfully copied {source_path} to {destination_path}.')
     except Exception as e:
-        print(f'!--ERROR occurred in copy_xlsx_file(): {e}')
+        print(style.RED + f'!--ERROR occurred in copy_xlsx_file(): {e}' + style.RESET)
 
 def copy_paste_cells(src_file_path, src_sheet_name, src_start_row, src_start_col, src_end_row, src_end_col,
                      target_file_path, target_sheet_name, target_start_row, target_start_col):
@@ -178,11 +178,11 @@ def copy_paste_cells(src_file_path, src_sheet_name, src_start_row, src_start_col
         print("Cells copied from source to target successfully!")
 
     except FileNotFoundError:
-        print(f"!--ERROR:The file '{src_file_path}' or '{target_file_path}' was not found.")
+        print(style.RED + f"!--ERROR:The file '{src_file_path}' or '{target_file_path}' was not found." + style.RESET)
     except PermissionError:
-        print("!--ERROR:Permission issue. Make sure you have the necessary permissions to access the files.")
+        print(style.RED + "!--ERROR:Permission issue. Make sure you have the necessary permissions to access the files." + style.RESET)
     except Exception as e:
-        print(f"!--ERROR occurred in copy_paste_cells(): {str(e)}")
+        print(style.RED + f"!--ERROR occurred in copy_paste_cells(): {str(e)}" + style.RESET)
 
 def find_empty_cells(file_path, sheet_to_check, columns_to_check, max_rows_to_check, start_row):
     
@@ -196,9 +196,9 @@ def find_empty_cells(file_path, sheet_to_check, columns_to_check, max_rows_to_ch
         print("opening "+file_path)
         workbook = openpyxl.load_workbook(file_path)
     except FileNotFoundError:
-        raise FileNotFoundError(f"File not found: {file_path}")
+        raise FileNotFoundError(style.RED + f"!--ERROR: File not found: {file_path}" + style.RESET)
     except Exception as e:
-        print(f"!--ERROR occurred in find_empty_cells(): {str(e)}")
+        print(style.RED + f"!--ERROR occurred in find_empty_cells(): {str(e)}" + style.RESET)
 
     empty_rows = []
     
@@ -248,7 +248,7 @@ def xlsx_to_pdf_with_libreoffice(xlsx_file_path, output_pdf_name):
         return output_pdf_path
 
     except Exception as e:
-        print(f"!--ERROR occurred in xlsx_to_pdf_with_libreoffice(): {str(e)}")
+        print(style.RED + f"!--ERROR occurred in xlsx_to_pdf_with_libreoffice(): {str(e)}" + style.RESET)
         return None
 
 def xlsx_to_pdf_with_excel(xlsx_file_path, output_pdf_name):
@@ -281,7 +281,7 @@ def xlsx_to_pdf_with_excel(xlsx_file_path, output_pdf_name):
         return output_pdf_path
 
     except Exception as e:
-        print(f"!--ERROR occurred in xlsx_to_pdf_with_excel(): {str(e)}")
+        print(style.RED + f"!--ERROR occurred in xlsx_to_pdf_with_excel(): {str(e)}" + style.RESET)
         return None
 
 def pdf_to_pdf_exclude_pages(input_path, output_path, list_excluded_pages):
@@ -309,7 +309,7 @@ def find_matching_cells(file_path, target_string, column_number):
         print("Opening " + file_path)
         workbook = openpyxl.load_workbook(file_path)
     except FileNotFoundError:
-        raise FileNotFoundError(f"File not found: {file_path}")
+        raise FileNotFoundError(style.RED + f"!--ERROR: File not found: {file_path}" + style.RESET)
 
     matching_rows = []
     content_list = []
@@ -447,12 +447,12 @@ def iterate_through_sheets(xlsx_file_path):
         return list_excluded_pages, list_page_names
 
     except Exception as e:
-        print(f"!--ERROR occurred in iterate_through_sheets(): {str(e)}")
+        print(style.RED + f"!--ERROR occurred in iterate_through_sheets(): {str(e)}"+ style.RESET)
 
 def split_pdf_pages(input_pdf_path, output_paths):
     # Check if the input PDF file exists
     if not os.path.exists(input_pdf_path):
-        raise FileNotFoundError(f"Input PDF file not found: {input_pdf_path}")
+        raise FileNotFoundError(style.RED + f"!--ERROR: Input PDF file not found: {input_pdf_path}" + style.RESET)
 
     # Open the input PDF file
     with open(input_pdf_path, 'rb') as input_file:
@@ -461,7 +461,7 @@ def split_pdf_pages(input_pdf_path, output_paths):
 
         # Check if the number of pages in the input PDF matches the number of output paths
         if len(pdf_reader.pages) < len(output_paths):
-            raise ValueError("Input PDF has fewer pages than elements in the output paths list.")
+            raise ValueError(style.YELLOW + "!--WARNING: Input PDF has fewer pages than elements in the output paths list." + style.RESET)
 
         # Create a folder with the current date and time as its name
         output_folder = "split_pdf_pages_output_"+current_datetime
@@ -578,7 +578,7 @@ user_input()
 
 # Ensure TFP exists, exit if not
 if not os.path.exists(TARGET_FILE_PATH):
-    print(f"!--ERROR: No file named {TARGET_FILE_PATH} detected")
+    print(style.RED + f"!--ERROR: No file named {TARGET_FILE_PATH} detected" style.RESET)
     input("Press Enter to close...")
     exit()
 
