@@ -449,7 +449,7 @@ def iterate_through_sheets(xlsx_file_path):
     except Exception as e:
         print(style.RED + f"!--ERROR occurred in iterate_through_sheets(): {str(e)}"+ style.RESET)
 
-def split_pdf_pages(input_pdf_path, output_paths):
+def split_pdf_pages(folder_prefix, input_pdf_path, output_paths):
     # Check if the input PDF file exists
     if not os.path.exists(input_pdf_path):
         raise FileNotFoundError(style.RED + f"!--ERROR: Input PDF file not found: {input_pdf_path}" + style.RESET)
@@ -464,7 +464,7 @@ def split_pdf_pages(input_pdf_path, output_paths):
             raise ValueError(style.YELLOW + "!--WARNING: Input PDF has fewer pages than elements in the output paths list." + style.RESET)
 
         # Create a folder with the current date and time as its name
-        output_folder = "split_pdf_pages_output_"+current_datetime
+        output_folder = folder_prefix+"_"+current_datetime
         os.makedirs(output_folder)
             
         # Iterate through pages and corresponding output paths
@@ -575,13 +575,11 @@ current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
 # Display Values to User and let them be altered
 user_input()
 
-
 # Ensure TFP exists, exit if not
 if not os.path.exists(TARGET_FILE_PATH):
-    print(style.RED + f"!--ERROR: No file named {TARGET_FILE_PATH} detected" style.RESET)
+    print(style.RED + f"!--ERROR: No file named {TARGET_FILE_PATH} detected" + style.RESET)
     input("Press Enter to close...")
     exit()
-
 
 # EXPLANATION:
 # okay heres some weird shuffling im doing between the first 2 functions
@@ -635,11 +633,12 @@ if result is not None:
     paste_image_into_pdf(raw_pdf_path, BNR_LOGO_IMAGE_PATH, 40, 0, 145, 145, image_pdf_path)
     print(f"Added Logo: {image_pdf_path}")
     
-    image_pdf_path2 = "Signature_"+os.path.basename(raw_pdf_path)
+    image_pdf_path2 = "Signed_"+os.path.basename(raw_pdf_path)
     paste_image_into_pdf(image_pdf_path, SIGNATURE_IMAGE_PATH, 250, 540, 500, 700, image_pdf_path2)
     print(f"Added Signature: {image_pdf_path2}")
     
     #Then convert the pdf file into one that doesnt have the excluded pages
+    FINAL_OUTPUT_PATH = "Final_"+os.path.basename(raw_pdf_path) # optional
     pdf_to_pdf_exclude_pages(image_pdf_path2, FINAL_OUTPUT_PATH, list_excluded_pages)
 
     print(f"Created file: '{FINAL_OUTPUT_PATH}'")
@@ -662,7 +661,7 @@ if result is not None:
     # print(f"list_page_names:\n{list_page_names}") # debug
     
     # Then split each page of that pdf into their own pdfs and label them
-    split_pdf_pages(FINAL_OUTPUT_PATH, list_page_names)
+    split_pdf_pages(os.path.splitext(FINAL_OUTPUT_PATH)[0], FINAL_OUTPUT_PATH, list_page_names)
 else:
     print(style.RED + "DAMN" + style.RESET)
 
