@@ -464,7 +464,7 @@ def split_pdf_pages(folder_prefix, input_pdf_path, output_paths):
             raise ValueError(style.YELLOW + "!--WARNING: Input PDF has fewer pages than elements in the output paths list." + style.RESET)
 
         # Create a folder with the current date and time as its name
-        output_folder = folder_prefix+"_"+current_datetime
+        output_folder = folder_prefix+" "+current_datetime
         os.makedirs(output_folder)
             
         # Iterate through pages and corresponding output paths
@@ -661,7 +661,7 @@ if result is not None:
     # print(f"list_page_names:\n{list_page_names}") # debug
     
     # Then split each page of that pdf into their own pdfs and label them
-    split_pdf_pages(os.path.splitext(FINAL_OUTPUT_PATH)[0], FINAL_OUTPUT_PATH, list_page_names)
+    split_pdf_pages(os.path.splitext(FINAL_OUTPUT_PATH)[0]+" "+SOURCE_SHEET_NAME, FINAL_OUTPUT_PATH, list_page_names)
 else:
     print(style.RED + "DAMN" + style.RESET)
 
