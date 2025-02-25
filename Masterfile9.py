@@ -662,6 +662,15 @@ if result is not None:
     
     # Then split each page of that pdf into their own pdfs and label them
     split_pdf_pages(os.path.splitext(FINAL_OUTPUT_PATH)[0]+" "+SOURCE_SHEET_NAME, FINAL_OUTPUT_PATH, list_page_names)
+    
+    # Delete extra files
+    print(f"Deleting extra files...")
+    os.remove(image_pdf_path)
+    print(f"Deleted {image_pdf_path}")
+    os.remove(image_pdf_path2)
+    print(f"Deleted {image_pdf_path2}")
+    os.remove(raw_pdf_path)
+    print(f"Deleted {raw_pdf_path}")
 else:
     print(style.RED + "DAMN" + style.RESET)
 
