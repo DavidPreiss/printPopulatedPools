@@ -16,6 +16,7 @@ print(f"\n{MY_NAME} START\n")
 
 WEEK_NUMBER = 1
 
+SOURCE_PREFIX = "C:/Users/David/Desktop/" # backup location of Source file
 SOURCE_FILE_PATH = "2024'.xlsx"
 SOURCE_SHEET_NAME = "December 2024" #will use active sheet if invalid
 
@@ -513,6 +514,7 @@ def user_input():
         exit()
     if retval == "c":
         change_values()
+    verifyPaths()
 
 def change_values():
     global SOURCE_FILE_PATH, SOURCE_SHEET_NAME, WEEK_NUMBER, COL_OF_CODES, TARGET_FILE_PATH
@@ -539,6 +541,23 @@ def change_values():
         print(f"TARGET_FILE_PATH: {TARGET_FILE_PATH}")
     
     user_input()
+
+def verifyPaths():
+    global SOURCE_FILE_PATH
+    if os.path.exists(SOURCE_FILE_PATH):
+        print(f"verified: {SOURCE_FILE_PATH}")
+    elif os.path.exists(SOURCE_PREFIX+SOURCE_FILE_PATH):
+        SOURCE_FILE_PATH = SOURCE_PREFIX+SOURCE_FILE_PATH
+        print(f"verified2: {SOURCE_FILE_PATH}")
+    else:
+        print(f" check: {SOURCE_PREFIX+SOURCE_FILE_PATH}")
+        print(style.RED + f"!--ERROR: No file named {SOURCE_FILE_PATH} detected" + style.RESET)
+        user_input()
+       
+    if not os.path.exists(TARGET_FILE_PATH):
+        print(style.RED + f"!--ERROR: No file named {TARGET_FILE_PATH} detected" + style.RESET)
+        user_input()
+
 
 ###   --Main Code
 
@@ -575,11 +594,6 @@ current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
 # Display Values to User and let them be altered
 user_input()
 
-# Ensure TFP exists, exit if not
-if not os.path.exists(TARGET_FILE_PATH):
-    print(style.RED + f"!--ERROR: No file named {TARGET_FILE_PATH} detected" + style.RESET)
-    input("Press Enter to close...")
-    exit()
 
 # EXPLANATION:
 # okay heres some weird shuffling im doing between the first 2 functions
