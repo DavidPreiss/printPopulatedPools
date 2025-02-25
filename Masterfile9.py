@@ -16,7 +16,7 @@ print(f"\n{MY_NAME} START\n")
 
 WEEK_NUMBER = 1
 
-SOURCE_PREFIX = "C:/Users/David/Desktop/" # backup location of Source file
+SOURCE_PREFIX = "//ps-fbzznf3/Lab/Lab recovery/Recreational Water/Analysis Summary/" # backup location of Source file
 SOURCE_FILE_PATH = "2024'.xlsx"
 SOURCE_SHEET_NAME = "December 2024" #will use active sheet if invalid
 
