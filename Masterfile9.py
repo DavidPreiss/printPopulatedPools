@@ -674,8 +674,9 @@ if result is not None:
     
     # print(f"list_page_names:\n{list_page_names}") # debug
     
+    finalName = os.path.splitext(FINAL_OUTPUT_PATH)[0]+" "+SOURCE_SHEET_NAME+" Week "+str(WEEK_NUMBER)
     # Then split each page of that pdf into their own pdfs and label them
-    split_pdf_pages(os.path.splitext(FINAL_OUTPUT_PATH)[0]+" "+SOURCE_SHEET_NAME, FINAL_OUTPUT_PATH, list_page_names)
+    split_pdf_pages(finalName, FINAL_OUTPUT_PATH, list_page_names)
     
     # Delete extra files
     print(f"Deleting extra files...")
