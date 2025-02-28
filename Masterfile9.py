@@ -1,5 +1,11 @@
 # Created by David Preiss
 
+# TO DO:
+# save large pdf to folder labeled by month and year
+# save folder of small pdfs to folder labeled by month and year
+# change how target coordinates found (assume row 9)
+
+
 ### TABLE OF CONTENTS:
 #   --Intro
 #   --Hard-Coded Values
