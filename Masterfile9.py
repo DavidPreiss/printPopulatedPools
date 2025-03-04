@@ -200,7 +200,7 @@ def find_empty_cells(file_path, sheet_to_check, columns_to_check, max_rows_to_ch
     #   because its the second cell that was checked
     #   see comment within code to see where it happens vvvv
     try:
-        print("opening "+file_path)
+        print("Opening "+file_path+" ...")
         workbook = openpyxl.load_workbook(file_path)
     except FileNotFoundError:
         raise FileNotFoundError(style.RED + f"!--ERROR: File not found: {file_path}" + style.RESET)
@@ -471,7 +471,7 @@ def split_pdf_pages(folder_prefix, input_pdf_path, output_paths):
             raise ValueError(style.YELLOW + "!--WARNING: Input PDF has fewer pages than elements in the output paths list." + style.RESET)
 
         # Create a folder with the current date and time as its name
-        output_folder = folder_prefix+" "+current_datetime
+        output_folder = folder_prefix#+" "+current_datetime
         os.makedirs(output_folder)
             
         # Iterate through pages and corresponding output paths
@@ -639,31 +639,39 @@ if result is not None:
     list_excluded_pages, list_page_names = result
 
     # Convert the .xlsx file to a pdf
-    print(f"Attempting to convert '{TEMP_TARGET_FILE_PATH}' into a pdf file with excel")
+    print(f"Attempting to convert '{TEMP_TARGET_FILE_PATH}' into a pdf file with excel...")
 
     # Provide the full path to the soffice executable
     raw_pdf_path = xlsx_to_pdf_with_excel(TEMP_TARGET_FILE_PATH, "Masterfile.pdf")
 
-    print(f"Created file: '{raw_pdf_path}'")
+    print(f" Created file: '{raw_pdf_path}'")
     
     #Add pictures to the raw pdf
     print(f"Adding images...")
     
     image_pdf_path = "Logo_"+os.path.basename(raw_pdf_path)
     paste_image_into_pdf(raw_pdf_path, BNR_LOGO_IMAGE_PATH, 40, 0, 145, 145, image_pdf_path)
-    print(f"Added Logo: {image_pdf_path}")
+    print(f" Added Logo: \t\t\t{image_pdf_path}")
     
     image_pdf_path2 = "Signed_"+os.path.basename(raw_pdf_path)
     paste_image_into_pdf(image_pdf_path, SIGNATURE_IMAGE_PATH, 250, 540, 500, 700, image_pdf_path2)
-    print(f"Added Signature: {image_pdf_path2}")
+    print(f" Added Signature: \t\t{image_pdf_path2}")
+    
+    # Set up name for path of final
+    FINAL_OUTPUT_PATH = "Final_"+os.path.basename(raw_pdf_path) # optional
+    dated_name = os.path.splitext(FINAL_OUTPUT_PATH)[0]+" "+SOURCE_SHEET_NAME+" Week "+str(WEEK_NUMBER)+" "+current_datetime
+    
+    final_reports_path = "Final Reports "+SOURCE_SHEET_NAME
+    os.makedirs(final_reports_path, exist_ok=True)
+    FINAL_OUTPUT_PATH = final_reports_path+"/"+dated_name+".pdf"
     
     #Then convert the pdf file into one that doesnt have the excluded pages
-    FINAL_OUTPUT_PATH = "Final_"+os.path.basename(raw_pdf_path) # optional
+    print(f"Creating FINAL_OUTPUT_PATH...")
     pdf_to_pdf_exclude_pages(image_pdf_path2, FINAL_OUTPUT_PATH, list_excluded_pages)
 
-    print(f"Created file: '{FINAL_OUTPUT_PATH}'")
+    print(f" Created FINAL_OUTPUT_PATH: \t{FINAL_OUTPUT_PATH}")
     
-    
+    print(f"\nSplitting FINAL_OUTPUT_PATH into Individual Reports...")
     # Then split each page of that pdf into their own pdfs and label them
     #split_pdf_pages(image_pdf_path, list_page_names) # not needed
     
@@ -680,18 +688,33 @@ if result is not None:
     
     # print(f"list_page_names:\n{list_page_names}") # debug
     
-    finalName = os.path.splitext(FINAL_OUTPUT_PATH)[0]+" "+SOURCE_SHEET_NAME+" Week "+str(WEEK_NUMBER)
+    #construct folder name prefix for split_pdf_pages()
+    individual_prefix = "Individual Reports "+SOURCE_SHEET_NAME+"/"+dated_name
+    
     # Then split each page of that pdf into their own pdfs and label them
-    split_pdf_pages(finalName, FINAL_OUTPUT_PATH, list_page_names)
+    split_pdf_pages(individual_prefix, FINAL_OUTPUT_PATH, list_page_names)
+    
+    # save folder of small pdfs to folder labeled by month and year
+    print(f" Saved to folder: \t"+individual_prefix) #debug
     
     # Delete extra files
-    print(f"Deleting extra files...")
+    print(f"\nDeleting extra files...")
     os.remove(image_pdf_path)
-    print(f"Deleted {image_pdf_path}")
+    print(f" Deleted: {image_pdf_path}")
     os.remove(image_pdf_path2)
-    print(f"Deleted {image_pdf_path2}")
+    print(f" Deleted: {image_pdf_path2}")
     os.remove(raw_pdf_path)
-    print(f"Deleted {raw_pdf_path}")
+    print(f" Deleted: {raw_pdf_path}")
+    
+    
+    # # save large pdf to folder labeled by month and year
+    # filed_Output_Path = "Final Reports "+SOURCE_SHEET_NAME+"/"+dated_name+".pdf"
+    # print(f"Moving Final Report...")
+    # print(f"Moving: {FINAL_OUTPUT_PATH} \n to the Location: {filed_Output_Path}")
+    # os.rename(FINAL_OUTPUT_PATH, filed_Output_Path)
+    # #os.rename(FINAL_OUTPUT_PATH, filed_Output_Path)
+    
+    
 else:
     print(style.RED + "DAMN" + style.RESET)
 
