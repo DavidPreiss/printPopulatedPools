@@ -46,7 +46,7 @@ SIMPLE_WAY = True #if true, following 2 dont matter
 SKIP_COPY = True
 CLEAR_OLD = True
 #set to true if you don't mind directly modifying TARGET_FILE_PATH
-DELETE_EXTRA = False
+DELETE_EXTRA = True
 ###   --Import Statements
 
 import shutil
@@ -676,19 +676,20 @@ if result is not None:
     # okay i have a list of pages names,
     # and a list of integers that are indexes to be deleted from the first list
     
-    print(f"list_page_names:\n{list_page_names}") # debug
-    print(f"list_excluded_pages:\n{list_excluded_pages}") # debug
+    # print(f"list_page_names:\n{list_page_names}") # debug
+    # print(f"list_excluded_pages:\n{list_excluded_pages}") # debug
     
+    # this loop deletes from high to low to avoid disturbing the list as we go
     exclude_counter = len(list_excluded_pages)
     while exclude_counter > 0:
         exclude_counter = exclude_counter-1
-        print(f"exclude_counter: {exclude_counter}")
-        print(f"list_excluded_pages[exclude_counter]: {list_excluded_pages[exclude_counter]}")
-        print(f"DELETE: list_page_names[(list_excluded_pages[exclude_counter]-1)]: {list_page_names[(list_excluded_pages[exclude_counter]-1)]}")
-        print(f"DELETE: list_page_names[(list_excluded_pages[exclude_counter])]: {list_page_names[(list_excluded_pages[exclude_counter])]}")
+        # print(f"exclude_counter: {exclude_counter}")
+        # print(f"list_excluded_pages[exclude_counter]: {list_excluded_pages[exclude_counter]}")
+        # print(f"DELETE: list_page_names[(list_excluded_pages[exclude_counter]-1)]: {list_page_names[(list_excluded_pages[exclude_counter]-1)]}")
+        # print(f"DELETE: list_page_names[(list_excluded_pages[exclude_counter])]: {list_page_names[(list_excluded_pages[exclude_counter])]}")
         del list_page_names[(list_excluded_pages[exclude_counter]-1)] # gotta have that -1
     
-    print(f"list_page_names:\n{list_page_names}") # debug
+    # print(f"list_page_names:\n{list_page_names}") # debug
     
     #construct folder name prefix for split_pdf_pages()
     individual_prefix = "Individual Reports "+SOURCE_SHEET_NAME+"/"+dated_name
