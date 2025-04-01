@@ -2,6 +2,9 @@
 
 # TO DO:
 # change how target coordinates found (assume row 9)
+# fix import try catches to all run w/o closing program
+# Auto-detect xlsx files
+# GUI?
 
 
 ### TABLE OF CONTENTS:
