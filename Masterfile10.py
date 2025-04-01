@@ -2,7 +2,7 @@
 
 # TO DO:
 # DONE! --change how target coordinates found (assume row 9)
-# fix import try catches to all run w/o closing program
+# DONE! --fix import try catches to all run w/o closing program
 # Auto-detect xlsx files
 # Manage opening & closing files
 # explore race conditions
