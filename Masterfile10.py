@@ -34,7 +34,7 @@ COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1)) #Do not touch
 
 TARGET_FILE_PATH = "Service.xlsx"
 
-ASSUME_ROW = False # if true, assumes TARGET_BLACK_BAR_ROW is correct
+ASSUME_ROW = True # if true, assumes TARGET_BLACK_BAR_ROW is correct
                   # if false, assumes TARGET_COL_OF_CODES is correct
 
 TARGET_BLACK_BAR_ROW = 9
