@@ -398,9 +398,12 @@ def iterate_through_sheets(xlsx_file_path):
                     if cell_value is not None and cell_value.strip() != "":
                         # Remove spaces from both cell content and target string for comparison
                         if cell_value.replace(' ', '') == target_string.replace(' ', ''):
-                            startCol = col_num # row_num+2
-                            print(f"startCol found: {startCol}") # debug
-                            break
+                            print(f"Exact Match Found!")
+                        else:
+                            print(style.YELLOW + f"!--WARNING: Match not exact " + style.RESET + f"\t'{cell_value}' VS '{target_string}'")
+                        startCol = col_num # row_num+2
+                        print(f"startCol found: {startCol}") # debug
+                        break
             else:
                 startCol = TARGET_COL_OF_CODES
                 #Find row# of target block in target file
