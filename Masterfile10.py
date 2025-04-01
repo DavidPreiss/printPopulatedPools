@@ -34,9 +34,14 @@ COL_OF_CODES = 2 + (JUMP_DISTANCE*(WEEK_NUMBER-1)) #Do not touch
 
 TARGET_FILE_PATH = "Service.xlsx"
 
+ASSUME_ROW = False # if true, assumes TARGET_BLACK_BAR_ROW is correct
+                  # if false, assumes TARGET_COL_OF_CODES is correct
+
+TARGET_BLACK_BAR_ROW = 9
 TARGET_COL_OF_CODES = 8
-TARGET_START_ROW = 10
-TARGET_START_COLUMN = "M"
+
+# TARGET_START_ROW = 10
+# TARGET_START_COLUMN = "M"
 
 FINAL_OUTPUT_PATH = MY_NAME+"_OUTPUT.pdf"
 TEMP_TARGET_FILE_PATH = "painted_canvas.xlsx"
@@ -379,17 +384,35 @@ def iterate_through_sheets(xlsx_file_path):
             print(f"sheet_name: '{sheet_name}'")
             
             #########################
-            #Find row# of target block in target file
-            target_string = sheet_name # could be "Lab ID #" have row_num+2
-            column_number = TARGET_COL_OF_CODES
-            for row_num in range(1, sheet.max_row + 1):
-                cell_value = sheet.cell(row=row_num, column=column_number).value
-                # Check if the cell is not empty or contains only spaces
-                if cell_value is not None and cell_value.strip() != "":
-                    # Remove spaces from both cell content and target string for comparison
-                    if cell_value.replace(' ', '') == target_string.replace(' ', ''):
-                        TARGET_START_ROW = row_num+1 # row_num+2
-                        break
+            if (ASSUME_ROW):
+                startRow = TARGET_BLACK_BAR_ROW+1
+                #Find col# of target block in target file
+                target_string = sheet_name # could be "Lab ID #" have row_num+2
+                row_number = TARGET_BLACK_BAR_ROW
+                print(f"Searching for start column in row {TARGET_BLACK_BAR_ROW}...") # debug
+                for col_num in range(1, 100):
+                    cell_value = sheet.cell(row=row_number, column=col_num).value
+                    # Check if the cell is not empty or contains only spaces
+                    if cell_value is not None and cell_value.strip() != "":
+                        # Remove spaces from both cell content and target string for comparison
+                        if cell_value.replace(' ', '') == target_string.replace(' ', ''):
+                            startCol = col_num # row_num+2
+                            print(f"startCol found: {startCol}") # debug
+                            break
+            else:
+                startCol = TARGET_COL_OF_CODES
+                #Find row# of target block in target file
+                target_string = sheet_name # could be "Lab ID #" have row_num+2
+                print(f"Searching for start row in column {startCol}...") # debug
+                for row_num in range(1, 100):
+                    cell_value = sheet.cell(row=row_num, column=startCol).value
+                    # Check if the cell is not empty or contains only spaces
+                    if cell_value is not None and cell_value.strip() != "":
+                        # Remove spaces from both cell content and target string for comparison
+                        if cell_value.replace(' ', '') == target_string.replace(' ', ''):
+                            startRow = row_num+1 # row_num+2
+                            print(f"startRow found: {startRow}") # debug
+                            break
             ########################
             # find row# of Sheet data
             result_row, result_content = find_matching_cells(SOURCE_FILE_PATH, sheet_name, COL_OF_CODES)
@@ -403,8 +426,8 @@ def iterate_through_sheets(xlsx_file_path):
             SOURCE_END_ROW = SOURCE_START_ROW+ len(result_content)
             SOURCE_END_COLUMN = SOURCE_START_COLUMN+BLOCK_WIDTH
 
-            # TARGET_START_ROW = 10 #unneccessary
-            TARGET_START_COLUMN = column_letter_to_number("M") #unneccessary
+            TARGET_START_ROW = startRow 
+            TARGET_START_COLUMN = startCol+BLOCK_OFFSET
             
             # Display information about the copy-paste operation
             print(f"Attempting to Copy cells ({SOURCE_START_ROW}, {SOURCE_START_COLUMN}) "
@@ -569,10 +592,10 @@ def verifyPaths():
 ###   --Main Code
 
 # Convert column variables to integers if they are strings
-if isinstance(TARGET_COL_OF_CODES, str):
-    TARGET_START_COLUMN = column_letter_to_number(TARGET_COL_OF_CODES)
-if isinstance(TARGET_START_COLUMN, str):
-    TARGET_START_COLUMN = column_letter_to_number(TARGET_START_COLUMN)
+# if isinstance(TARGET_COL_OF_CODES, str):
+    # TARGET_START_COLUMN = column_letter_to_number(TARGET_COL_OF_CODES)
+# if isinstance(TARGET_START_COLUMN, str):
+    # TARGET_START_COLUMN = column_letter_to_number(TARGET_START_COLUMN)
 
 
 # Change working directory to the script's directory
