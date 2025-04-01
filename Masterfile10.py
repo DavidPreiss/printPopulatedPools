@@ -84,14 +84,14 @@ except ImportError as e:
     print(style.RED + f"!--ERROR:{e}\nopenpyxl is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "openpyxl"])
     print("Installation complete. You can now run the script.")
-    exit()
+    # exit()
 try:
     import PyPDF2
 except ImportError as e:
     print(style.RED + f"!--ERROR:{e}\nPyPDF2 is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "PyPDF2"])
     print("Installation complete. You can now run the script.")
-    exit()
+    # exit()
 
 try:
     from datetime import datetime
@@ -99,7 +99,7 @@ except ImportError as e:
     print(style.RED + f"!--ERROR:{e}\ndatetime is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "datetime"])
     print("Installation complete. You can now run the script.")
-    exit()
+    # exit()
 
 try:
     import fitz
@@ -107,7 +107,7 @@ except ImportError as e:
     print(style.RED + f"!--ERROR:{e}\nPyMuPDF is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "PyMuPDF"])
     print("Installation complete. You can now run the script.")
-    exit()
+    # exit()
 
 try:
     import win32com.client
@@ -115,7 +115,7 @@ except ImportError as e:
     print(style.RED + f"!--ERROR:{e}\nwin32com is not installed. Installing..." + style.RESET)
     subprocess.check_call(["pip", "install", "pywin32"])
     print("Installation complete. You can now run the script.")
-    exit()
+    # exit()
 
 ###   --Function Definitions
 
