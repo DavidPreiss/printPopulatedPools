@@ -385,11 +385,12 @@ def iterate_through_sheets(xlsx_file_path):
             print(f"\nsheet: '{sheet}'")
             print(f"sheet_name: '{sheet_name}'")
             
+            target_string = sheet_name
+            
             #########################
             if (ASSUME_ROW):
                 startRow = TARGET_BLACK_BAR_ROW+1
                 #Find col# of target block in target file
-                target_string = sheet_name # could be "Lab ID #" have row_num+2
                 row_number = TARGET_BLACK_BAR_ROW
                 print(f"Searching for start column in row {TARGET_BLACK_BAR_ROW}...") # debug
                 for col_num in range(1, 100):
@@ -401,13 +402,13 @@ def iterate_through_sheets(xlsx_file_path):
                             print(f"Exact Match Found!")
                         else:
                             print(style.YELLOW + f"!--WARNING: Match not exact " + style.RESET + f"\t'{cell_value}' VS '{target_string}'")
+                            target_string = cell_value.replace(' ', '')
                         startCol = col_num # row_num+2
                         print(f"startCol found: {startCol}") # debug
                         break
             else:
                 startCol = TARGET_COL_OF_CODES
                 #Find row# of target block in target file
-                target_string = sheet_name # could be "Lab ID #" have row_num+2
                 print(f"Searching for start row in column {startCol}...") # debug
                 for row_num in range(1, 100):
                     cell_value = sheet.cell(row=row_num, column=startCol).value
@@ -420,7 +421,7 @@ def iterate_through_sheets(xlsx_file_path):
                             break
             ########################
             # find row# of Sheet data
-            result_row, result_content = find_matching_cells(SOURCE_FILE_PATH, sheet_name, COL_OF_CODES)
+            result_row, result_content = find_matching_cells(SOURCE_FILE_PATH, target_string, COL_OF_CODES)
             if result_row == None:
                 print(style.YELLOW + f"!--WARNING: Match NOT Found for {sheet_name} in {SOURCE_FILE_PATH}" + style.RESET)
                 
