@@ -49,6 +49,8 @@ EXTRA_PAGES_PER_SHEET = 3
 BNR_LOGO_IMAGE_PATH = "B&R_Logo.png"
 SIGNATURE_IMAGE_PATH = "Signature_AndreSmith.png"
 
+DUMP_FOLDER = True
+DUMP_FOLDER_NAME = "Dump Folder"
 SIMPLE_WAY = True #if true, following 2 dont matter
 SKIP_COPY = True
 CLEAR_OLD = True
@@ -58,7 +60,7 @@ DELETE_EXTRA = True
 
 import shutil
 import os
-
+import calendar
 # System call
 os.system("")
 
@@ -118,6 +120,14 @@ except ImportError as e:
     # exit()
 
 ###   --Function Definitions
+def MonthStr2Int(month_name):
+    try:
+        # Make it case-insensitive by capitalizing the first letter and lowercasing the rest
+        month_name = month_name.capitalize()
+        return list(calendar.month_name).index(month_name)
+    except ValueError as e:
+        print(style.RED + f"!--ERROR:{e}"+ style.RESET)
+        return -1  # or raise an error or return -1 if the month is invalid
 
 def column_letter_to_number(column_letter):
     """
@@ -268,7 +278,7 @@ def xlsx_to_pdf_with_excel(xlsx_file_path, output_pdf_name):
         # Ensure that the output PDF directory exists (current working directory)
         output_dir = os.getcwd()
         os.makedirs(output_dir, exist_ok=True)
-        print(f"Output directory: '{output_dir}'")
+        # print(f"Output directory: '{output_dir}'") # debug
 
         # Connect to Excel application
         excel_app = win32com.client.Dispatch("Excel.Application")
@@ -289,7 +299,7 @@ def xlsx_to_pdf_with_excel(xlsx_file_path, output_pdf_name):
         workbook.Close(False)
         excel_app.Quit()
 
-        print(f"PDF created with excel successfully: {output_pdf_path}")
+        # print(f"PDF created with excel successfully: {output_pdf_path}")
         return output_pdf_path
 
     except Exception as e:
@@ -510,11 +520,28 @@ def split_pdf_pages(folder_prefix, input_pdf_path, output_paths):
             pdf_writer.add_page(pdf_reader.pages[page_num])
 
             # Save the new PDF to the specified output path
+            # print(f"output_path: '{output_path}'") # debug
             output_file_path = os.path.join(output_folder, f"{output_path}.pdf")
             with open(output_file_path, 'wb') as output_file:
                 pdf_writer.write(output_file)
+            # print(f"Created '{output_file_path}'") # debug
             
-            #print(f"Created '{output_file_path}.pdf'")
+            #####
+            if DUMP_FOLDER and len(output_path)<5:
+                # print(f"folder_prefix: {folder_prefix}") #debug
+                # print(f"folder_prefix[-31:-16]: '{folder_prefix[-31:-16]}'") #debug
+                dump_path = DUMP_FOLDER_NAME+"/P"+output_path
+                if not os.path.exists(dump_path): 
+                    os.makedirs(dump_path)
+                pdf_writer.add_page(pdf_reader.pages[page_num])
+                Dump_path = os.path.join(dump_path, f"P{output_path} {folder_prefix[-31:-16]}.pdf")
+                with open(Dump_path, 'wb') as output_file:
+                    pdf_writer.write(output_file)
+                    # print("boom") # debug
+            
+                # print(f"Created '{Dump_path}'") # debug
+            #####
+            
         # If there are more pages in the input PDF, print a warning
         if len(pdf_reader.pages) > len(output_paths):
             print(style.YELLOW + "!--WARNING: Input PDF has more pages than elements in the output paths list. "
@@ -685,10 +712,19 @@ if result is not None:
     print(f" Added Signature: \t\t{image_pdf_path2}")
     
     # Set up name for path of final
-    FINAL_OUTPUT_PATH = "Final_"+os.path.basename(raw_pdf_path) # optional
-    dated_name = os.path.splitext(FINAL_OUTPUT_PATH)[0]+" "+SOURCE_SHEET_NAME+" Week "+str(WEEK_NUMBER)+" "+current_datetime
+    FINAL_OUTPUT_PATH = os.path.basename(raw_pdf_path) # optional
+    YearAndstrMonth = SOURCE_SHEET_NAME[-4:]+" "+SOURCE_SHEET_NAME[:-5]
+    YearAndintMonth = SOURCE_SHEET_NAME[-4:]+" M"+str(MonthStr2Int(SOURCE_SHEET_NAME[:-5])).zfill(2)
+    # print(f"YearAndstrMonth: {YearAndstrMonth}") # debug
+    # print(f"YearAndintMonth: {YearAndintMonth}") # debug
+    YearAndMonth = YearAndintMonth
     
-    final_reports_path = "Final Reports "+SOURCE_SHEET_NAME
+    os.remove(raw_pdf_path)
+    print(f" Deleted: {raw_pdf_path}")
+    
+    dated_name = os.path.splitext(FINAL_OUTPUT_PATH)[0]+" "+YearAndMonth+" Week "+str(WEEK_NUMBER)+" "+current_datetime
+    
+    final_reports_path = "Final Reports "+YearAndMonth
     os.makedirs(final_reports_path, exist_ok=True)
     FINAL_OUTPUT_PATH = final_reports_path+"/"+dated_name+".pdf"
     
@@ -721,7 +757,7 @@ if result is not None:
     # print(f"list_page_names:\n{list_page_names}") # debug
     
     #construct folder name prefix for split_pdf_pages()
-    individual_prefix = "Individual Reports "+SOURCE_SHEET_NAME+"/"+dated_name
+    individual_prefix = "Individual Reports "+YearAndMonth+"/"+dated_name
     
     # Then split each page of that pdf into their own pdfs and label them
     split_pdf_pages(individual_prefix, FINAL_OUTPUT_PATH, list_page_names)
@@ -736,8 +772,6 @@ if result is not None:
         print(f" Deleted: {image_pdf_path}")
         os.remove(image_pdf_path2)
         print(f" Deleted: {image_pdf_path2}")
-        os.remove(raw_pdf_path)
-        print(f" Deleted: {raw_pdf_path}")
     
     
     # # save large pdf to folder labeled by month and year
