@@ -244,6 +244,7 @@ def find_empty_cells(file_path, sheet_to_check, columns_to_check, max_rows_to_ch
                 print(f"row '{row_num}' col '{column}' is empty")
 
     workbook.close()
+    print("Closed "+file_path)
     return empty_rows
 
 def xlsx_to_pdf_with_libreoffice(xlsx_file_path, output_pdf_name):
@@ -502,17 +503,27 @@ def split_pdf_pages(folder_prefix, input_pdf_path, output_paths):
     with open(input_pdf_path, 'rb') as input_file:
         # Create a PDF reader object
         pdf_reader = PyPDF2.PdfReader(input_file)
+        
+        # print(f"\t folder_prefix:\t {folder_prefix}") # debug
 
         # Check if the number of pages in the input PDF matches the number of output paths
         if len(pdf_reader.pages) < len(output_paths):
             raise ValueError(style.YELLOW + "!--WARNING: Input PDF has fewer pages than elements in the output paths list." + style.RESET)
 
+        
+        # print(f"\t input_pdf_path:\t {input_pdf_path}") # debug
+        
         # Create a folder with the current date and time as its name
         output_folder = folder_prefix#+" "+current_datetime
         os.makedirs(output_folder)
-            
+        
+        print("\t Populating Dump Folder...")
         # Iterate through pages and corresponding output paths
         for page_num, output_path in zip(range(len(output_paths)), output_paths):
+            
+            # remove whitespace from output_path
+            output_path = output_path.strip()
+            
             # Create a new PDF writer object
             pdf_writer = PyPDF2.PdfWriter()
 
