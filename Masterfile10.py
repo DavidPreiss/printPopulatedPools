@@ -538,19 +538,23 @@ def split_pdf_pages(folder_prefix, input_pdf_path, output_paths):
             # print(f"Created '{output_file_path}'") # debug
             
             #####
-            if DUMP_FOLDER and len(output_path)<5:
-                # print(f"folder_prefix: {folder_prefix}") #debug
-                # print(f"folder_prefix[-31:-16]: '{folder_prefix[-31:-16]}'") #debug
-                dump_path = DUMP_FOLDER_NAME+"/P"+output_path
-                if not os.path.exists(dump_path): 
-                    os.makedirs(dump_path)
-                pdf_writer.add_page(pdf_reader.pages[page_num])
-                Dump_path = os.path.join(dump_path, f"P{output_path} {folder_prefix[-31:-16]}.pdf")
-                with open(Dump_path, 'wb') as output_file:
-                    pdf_writer.write(output_file)
-                    # print("boom") # debug
-            
-                # print(f"Created '{Dump_path}'") # debug
+            try:
+                if DUMP_FOLDER and len(output_path)<5:
+                    # print(f"folder_prefix: {folder_prefix}") #debug
+                    # print(f"folder_prefix[-31:-16]: '{folder_prefix[-31:-16]}'") #debug
+                    dump_path = DUMP_FOLDER_NAME+"/P"+output_path
+                    if not os.path.exists(dump_path): 
+                        os.makedirs(dump_path)
+                    pdf_writer.add_page(pdf_reader.pages[page_num])
+                    Dump_path = os.path.join(dump_path, f"P{output_path} {folder_prefix[-31:-16]}.pdf")
+                    with open(Dump_path, 'wb') as output_file:
+                        pdf_writer.write(output_file)
+                        # print("boom") # debug
+                
+                    # print(f"Created '{Dump_path}'") # debug
+            except Exception as e:
+                print(style.RED + f"!--ERROR occurred w Dump Folder in split_pdf_pages(): {str(e)}" + style.RESET)
+                input("Press Enter to continue...")
             #####
             
         # If there are more pages in the input PDF, print a warning
