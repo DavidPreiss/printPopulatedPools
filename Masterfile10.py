@@ -1,11 +1,10 @@
 # Created by David Preiss
 
 # TO DO:
-# DONE! --change how target coordinates found (assume row 9)
-# DONE! --fix import try catches to all run w/o closing program
 # Auto-detect xlsx files
 # Manage opening & closing files
 # explore race conditions
+# improve code readability
 # GUI?
 
 
@@ -523,6 +522,7 @@ def split_pdf_pages(folder_prefix, input_pdf_path, output_paths):
             
             # remove whitespace from output_path
             output_path = output_path.strip()
+            # print(f"output_path: '{output_path}'") # debug
             
             # Create a new PDF writer object
             pdf_writer = PyPDF2.PdfWriter()
@@ -531,7 +531,6 @@ def split_pdf_pages(folder_prefix, input_pdf_path, output_paths):
             pdf_writer.add_page(pdf_reader.pages[page_num])
 
             # Save the new PDF to the specified output path
-            # print(f"output_path: '{output_path}'") # debug
             output_file_path = os.path.join(output_folder, f"{output_path}.pdf")
             with open(output_file_path, 'wb') as output_file:
                 pdf_writer.write(output_file)
