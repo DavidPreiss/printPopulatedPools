@@ -668,9 +668,15 @@ if True:
             statswb.save(statsFile_path)
             # print(f"created: '{statsFile_path}'") # debug
         else:
+            
             statswb = openpyxl.load_workbook(statsFile_path)
             ws = statswb.active
-            ws.cell(2,2).value = ws.cell(2,2).value+1
+            if ws.cell(2,2).value is None:
+                ws.cell(2,1).value = MY_NAME
+                ws.cell(2,2).value = 1
+                ws.cell(2,3).value = datetime.now()
+            else:
+                ws.cell(2,2).value = ws.cell(2,2).value+1
             ws.cell(2,4).value = datetime.now()
             statswb.save(statsFile_path)
         print("iterated stats")
