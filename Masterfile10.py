@@ -1,4 +1,4 @@
-# Created by David Preiss
+# Created by David N Preiss
 
 # TO DO:
 # Auto-detect xlsx files
@@ -17,11 +17,11 @@
 #   --Outro
 
 #   --Intro
-MY_NAME = "MASTERFILE10"
+MY_NAME = "Masterfile10.py"
 print(f"\n{MY_NAME} START\n")
 
 ###   --Hard-Coded Values
-try:
+if True:
     WEEK_NUMBER = 1
 
     SOURCE_PREFIX = "//ps-fbzznf3/Lab/Lab recovery/Recreational Water/Analysis Summary/" # backup location of Source file
@@ -49,7 +49,7 @@ try:
     SIGNATURE_IMAGE_PATH = "Signature_AndreSmith.png"
 
     DUMP_FOLDER = True  # Archives pages into a Dump Folder, important!
-    DUMP_FOLDER_NAME = "Dump Folder"
+    DUMP_FOLDER_PATH = "Dump Folder"
 
     SIMPLE_WAY = True   # if true, following 2 dont matter
     SKIP_COPY = True
@@ -58,7 +58,7 @@ try:
     DELETE_EXTRA = True # deletes extra files at the end of everything
 
 ###   --Import Statements
-try:
+if True:
     import shutil
     import os
     import calendar
@@ -121,7 +121,7 @@ try:
         # exit()
 
 ###   --Function Definitions
-try:
+if True:
     def MonthStr2Int(month_name):
         try:
             # Make it case-insensitive by capitalizing the first letter and lowercasing the rest
@@ -166,9 +166,9 @@ try:
             
             # Check if source sheet exists, if not, use the active sheet
             if src_sheet_name not in src_wb.sheetnames:
-                print(style.YELLOW + f"!--WARNING: Source sheet '{src_sheet_name}' not found." + style.RESET)
-                print(f"Using active sheet '{src_wb.active}'")
-                src_ws = src_wb.active
+                print(style.YELLOW + f"!--WARNING: Source sheet '{src_sheet_name}' not found.")
+                print(f"Using active sheet '{src_wb.active}'" + style.RESET)
+                src_ws = src_wb.active.title
             else:
                 src_ws = src_wb[src_sheet_name]
 
@@ -544,7 +544,7 @@ try:
                     if DUMP_FOLDER and len(output_path)<5:
                         # print(f"folder_prefix: {folder_prefix}") #debug
                         # print(f"folder_prefix[-31:-16]: '{folder_prefix[-31:-16]}'") #debug
-                        dump_path = DUMP_FOLDER_NAME+"/P"+output_path
+                        dump_path = DUMP_FOLDER_PATH+"/P"+output_path
                         if not os.path.exists(dump_path): 
                             os.makedirs(dump_path)
                         pdf_writer.add_page(pdf_reader.pages[page_num])
@@ -577,18 +577,24 @@ try:
         doc.save(output_pdf_path)
 
     def user_input():
-        print("\n\t Hello!")
-        print(f"SOURCE_FILE_PATH:\t {SOURCE_FILE_PATH}")
-        print(f"SOURCE_SHEET_NAME:\t {SOURCE_SHEET_NAME}")
-        print(f"WEEK_NUMBER:\t\t {WEEK_NUMBER}")
-        print(f"TARGET_FILE_PATH:\t {TARGET_FILE_PATH}")
-        retval = input("type 'c' to change 'x' to exit:\t")
-        if retval == "x":
-            input("Press Enter to close...")
-            exit()
-        if retval == "c":
-            change_values()
-        verifyPaths()
+        repeat = True
+        while (repeat):
+            print("\n\t Hello!")
+            print(f"SOURCE_FILE_PATH:\t {SOURCE_FILE_PATH}")
+            print(f"SOURCE_SHEET_NAME:\t {SOURCE_SHEET_NAME}")
+            print(f"WEEK_NUMBER:\t\t {WEEK_NUMBER}")
+            print(f"TARGET_FILE_PATH:\t {TARGET_FILE_PATH}")
+            retval = input("type 'c' to change 'x' to exit:\t")
+            if retval == "x":
+                input("Press Enter to close...")
+                exit()
+            if retval == "c":
+                change_values()
+            else:
+                repeat = verifyPaths()
+                if not (repeat):
+                    repeat = verifySheet()
+        iterateStats(DUMP_FOLDER_PATH+"/statsFolder")
 
     def change_values():
         global SOURCE_FILE_PATH, SOURCE_SHEET_NAME, WEEK_NUMBER, COL_OF_CODES, TARGET_FILE_PATH
@@ -613,11 +619,10 @@ try:
         if tempval.strip() != "":
             TARGET_FILE_PATH = tempval
             print(f"TARGET_FILE_PATH: {TARGET_FILE_PATH}")
-        
-        user_input()
 
     def verifyPaths():
         global SOURCE_FILE_PATH
+        verificationFAIL = False
         if os.path.exists(SOURCE_FILE_PATH):
             print(f"verified: {SOURCE_FILE_PATH}")
         elif os.path.exists(SOURCE_PREFIX+SOURCE_FILE_PATH):
@@ -626,13 +631,67 @@ try:
         else:
             print(f" check: {SOURCE_PREFIX+SOURCE_FILE_PATH}")
             print(style.RED + f"!--ERROR: No file named {SOURCE_FILE_PATH} detected" + style.RESET)
-            user_input()
-           
+            verificationFAIL = True
+        
         if not os.path.exists(TARGET_FILE_PATH):
             print(style.RED + f"!--ERROR: No file named {TARGET_FILE_PATH} detected" + style.RESET)
-            user_input()
+            verificationFAIL = True
+        
+        
+        return verificationFAIL
 
+    def iterateStats(statsFolder_path):
+        
+        statsFile_path = statsFolder_path+"/"+"statsFile.xlsx"
+        if not os.path.exists(statsFolder_path):
+            # print(f"creating statsFolder_path: '{statsFolder_path}'") # debug
+            os.makedirs(statsFolder_path)
+            from openpyxl import Workbook
 
+            # Create a workbook
+            statswb = Workbook()
+
+            # Get the active worksheet or create a new sheet
+            ws = statswb.active
+
+            ws.cell(1,1).value = "Program Name"
+            ws.cell(1,2).value = "Times Ran on this CPU"
+            ws.cell(1,3).value = "First Ran on this CPU"
+            ws.cell(1,4).value = "Last Ran on this CPU"
+            
+            ws.cell(2,1).value = MY_NAME
+            ws.cell(2,2).value = 1
+            ws.cell(2,3).value = datetime.now()
+            ws.cell(2,4).value = datetime.now()
+            
+            # Save the workbook to a file
+            statswb.save(statsFile_path)
+            # print(f"created: '{statsFile_path}'") # debug
+        else:
+            statswb = openpyxl.load_workbook(statsFile_path)
+            ws = statswb.active
+            ws.cell(2,2).value = ws.cell(2,2).value+1
+            ws.cell(2,4).value = datetime.now()
+            statswb.save(statsFile_path)
+        print("iterated stats")
+
+    def verifySheet():
+        global SOURCE_SHEET_NAME 
+        # Load source workbook
+        src_wb = openpyxl.load_workbook(SOURCE_FILE_PATH)
+        repeat = False
+        # Check if source sheet exists, if not, use the active sheet
+        if SOURCE_SHEET_NAME not in src_wb.sheetnames:
+            print(f"List of sheets:\n\t{src_wb.sheetnames}")
+            print(style.YELLOW + f"!--WARNING: Source sheet '{SOURCE_SHEET_NAME}' not found in '{SOURCE_FILE_PATH}'")
+            print(f"if unchanged, it will default to using the active sheet '{src_wb.active}'" + style.RESET)
+            tempval = input("if this is fine type 'o': \t")
+            if tempval.strip() != "o":
+                repeat = True
+            else:
+                SOURCE_SHEET_NAME = src_wb.active.title
+        src_wb.close()
+        return repeat
 ###   --Main Code
 
 # Convert column variables to integers if they are strings
