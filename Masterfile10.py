@@ -49,7 +49,8 @@ if True:
     SIGNATURE_IMAGE_PATH = "Signature_AndreSmith.png"
 
     DUMP_FOLDER = True  # Archives pages into a Dump Folder, important!
-    DUMP_FOLDER_PATH = "Dump Folder"
+    DUMP_FOLDER_PATH = "Dump Folder" # For David's Computer
+    # DUMP_FOLDER_PATH = "../../Web Archive" # For Andre's Computer
 
     SIMPLE_WAY = True   # if true, following 2 dont matter
     SKIP_COPY = True
