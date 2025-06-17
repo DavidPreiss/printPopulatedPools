@@ -1,7 +1,7 @@
 # Created by David N Preiss
 
 # TO DO:
-# locally adopt Andre's path convention for dumpfile
+# locally adopt Andre's path convention for Web Archive
 # Auto-detect xlsx files
 # Manage opening & closing files
 # explore race conditions
@@ -49,9 +49,8 @@ if True:
     BNR_LOGO_IMAGE_PATH = "B&R_Logo.png"
     SIGNATURE_IMAGE_PATH = "Signature_AndreSmith.png"
 
-    DUMP_FOLDER = True  # Archives pages into a Dump Folder, important!
-    DUMP_FOLDER_PATH = "Dump Folder" # For David's Computer
-    # DUMP_FOLDER_PATH = "../../Web Archive" # For Andre's Computer
+    WEB_ARCHIVE_BOOL = True  # Archives pages into a Folder, important!
+    WEB_ARCHIVE_PATH = "../../Web Archive"
 
     SIMPLE_WAY = True   # if true, following 2 dont matter
     SKIP_COPY = True
@@ -521,7 +520,7 @@ if True:
             output_folder = folder_prefix#+" "+current_datetime
             os.makedirs(output_folder)
             
-            print("\t Populating Dump Folder...")
+            print("\t Populating Web Archive...")
             # Iterate through pages and corresponding output paths
             for page_num, output_path in zip(range(len(output_paths)), output_paths):
                 
@@ -543,18 +542,18 @@ if True:
                 
                 #####
                 try:
-                    if DUMP_FOLDER and len(output_path)<5:
+                    if WEB_ARCHIVE_BOOL and len(output_path)<5:
                         # print(f"folder_prefix: {folder_prefix}") #debug
                         # print(f"folder_prefix[-31:-16]: '{folder_prefix[-31:-16]}'") #debug
-                        dump_path = DUMP_FOLDER_PATH+"/P"+output_path
-                        if not os.path.exists(dump_path): 
-                            os.makedirs(dump_path)
+                        temp_path = WEB_ARCHIVE_PATH+"/P"+output_path
+                        if not os.path.exists(temp_path): 
+                            os.makedirs(temp_path)
                         pdf_writer.add_page(pdf_reader.pages[page_num])
-                        Dump_path = os.path.join(dump_path, f"P{output_path} {folder_prefix[-31:-16]}.pdf")
-                        with open(Dump_path, 'wb') as output_file:
+                        temp_path2 = os.path.join(temp_path, f"P{output_path} {folder_prefix[-31:-16]}.pdf")
+                        with open(temp_path2, 'wb') as output_file:
                             pdf_writer.write(output_file)
                 except Exception as e:
-                    print(style.RED + f"!--ERROR occurred w Dump Folder in split_pdf_pages(): {str(e)}" + style.RESET)
+                    print(style.RED + f"!--ERROR occurred w Web Archive Folder in split_pdf_pages(): {str(e)}" + style.RESET)
                     input("Press Enter to continue...")
                 #####
                 
@@ -596,7 +595,7 @@ if True:
                 repeat = verifyPaths()
                 if not (repeat):
                     repeat = verifySheet()
-        iterateStats(DUMP_FOLDER_PATH+"/statsFolder")
+        iterateStats(WEB_ARCHIVE_PATH+"/statsFolder")
 
     def change_values():
         global SOURCE_FILE_PATH, SOURCE_SHEET_NAME, WEEK_NUMBER, COL_OF_CODES, TARGET_FILE_PATH
