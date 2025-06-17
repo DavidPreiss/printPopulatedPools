@@ -1,6 +1,7 @@
 # Created by David N Preiss
 
 # TO DO:
+# locally adopt Andre's path convention for dumpfile
 # Auto-detect xlsx files
 # Manage opening & closing files
 # explore race conditions
