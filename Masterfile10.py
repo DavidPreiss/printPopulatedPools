@@ -1,5 +1,8 @@
 # Created by David N Preiss
 
+## Currently working on:
+#   keep track of all warnings and print at the end
+
 # TO DO:
 # locally adopt Andre's path convention for Web Archive
 # Auto-detect xlsx files
@@ -57,6 +60,9 @@ if True:
     CLEAR_OLD = True    # set to true if you don't mind directly modifying TARGET_FILE_PATH
 
     DELETE_EXTRA = True # deletes extra files at the end of everything
+        
+    ## create str array for warnings
+    WarningsList = []
 
 ###   --Import Statements
 if True:
@@ -167,8 +173,9 @@ if True:
             
             # Check if source sheet exists, if not, use the active sheet
             if src_sheet_name not in src_wb.sheetnames:
-                print(style.YELLOW + f"!--WARNING: Source sheet '{src_sheet_name}' not found.")
-                print(f"Using active sheet '{src_wb.active}'" + style.RESET)
+                warningString = f"!--WARNING: Source sheet '{src_sheet_name}' not found. Using active sheet '{src_wb.active}'"
+                WarningsList.append(warningString)
+                print(style.YELLOW + warningString + style.RESET)
                 src_ws = src_wb.active.title
             else:
                 src_ws = src_wb[src_sheet_name]
@@ -369,7 +376,8 @@ if True:
         return matching_rows[0] if matching_rows else None, content_list
 
     def iterate_through_sheets(xlsx_file_path):
-
+        
+        global WarningsList
         # iterates through sheets of xlsx_file_path
         # Copying data from SOURCE_FILE_PATH to xlsx_file_path
         # returns list of excluded pages
@@ -412,7 +420,10 @@ if True:
                             if cell_value.replace(' ', '') == target_string.replace(' ', ''):
                                 print(f"Exact Match Found!")
                             else:
-                                print(style.YELLOW + f"!--WARNING: Match not exact " + style.RESET + f"\t'{cell_value}' VS '{target_string}'")
+                                warningString = f"!--WARNING: Match not exact \t'{cell_value}' VS '{target_string}'"
+                                WarningsList.append(warningString)
+                    
+                                print(style.YELLOW + warningString + style.RESET)
                                 target_string = cell_value.replace(' ', '')
                             startCol = col_num # row_num+2
                             print(f"startCol found: {startCol}") # debug
@@ -434,7 +445,10 @@ if True:
                 # find row# of Sheet data
                 result_row, result_content = find_matching_cells(SOURCE_FILE_PATH, target_string, COL_OF_CODES)
                 if result_row == None:
-                    print(style.YELLOW + f"!--WARNING: Match NOT Found for {sheet_name} in {SOURCE_FILE_PATH}" + style.RESET)
+                    
+                    warningString = f"!--WARNING: Match NOT Found for {sheet_name} in {SOURCE_FILE_PATH}"
+                    WarningsList.append(warningString)
+                    print(style.YELLOW + warningString + style.RESET)
                     
                     continue
                 SOURCE_START_ROW = result_row + 1
@@ -498,6 +512,8 @@ if True:
             print(style.RED + f"!--ERROR occurred in iterate_through_sheets(): {str(e)}"+ style.RESET)
 
     def split_pdf_pages(folder_prefix, input_pdf_path, output_paths):
+        
+        global WarningsList
         # Check if the input PDF file exists
         if not os.path.exists(input_pdf_path):
             raise FileNotFoundError(style.RED + f"!--ERROR: Input PDF file not found: {input_pdf_path}" + style.RESET)
@@ -511,7 +527,12 @@ if True:
 
             # Check if the number of pages in the input PDF matches the number of output paths
             if len(pdf_reader.pages) < len(output_paths):
-                raise ValueError(style.YELLOW + "!--WARNING: Input PDF has fewer pages than elements in the output paths list." + style.RESET)
+                warningString = "!--ERROR: Input PDF has fewer pages than elements in the output paths list."
+                WarningsList.append(warningString)
+                
+                ### TODO: Add step here that deletes files
+                raise ValueError(style.RED + warningString + style.RESET)
+                ### TODO: Add step here that deletes files
 
             
             # print(f"\t input_pdf_path:\t {input_pdf_path}") # debug
@@ -559,8 +580,9 @@ if True:
                 
             # If there are more pages in the input PDF, print a warning
             if len(pdf_reader.pages) > len(output_paths):
-                print(style.YELLOW + "!--WARNING: Input PDF has more pages than elements in the output paths list. "
-                      "Subsequent pages will be ignored." + style.RESET)
+                warningString = "!--WARNING: Input PDF has more pages than elements in the output paths list. "
+                WarningsList.append(warningString)
+                print(style.YELLOW + warningString + "Subsequent pages will be ignored." + style.RESET)
                 #for ii in range(len(pdf_reader.pages)):
                     #print(pdf_reader.pages[ii] + "\t\t" + output_paths[ii])
                 
@@ -683,15 +705,20 @@ if True:
         print("iterated stats")
 
     def verifySheet():
-        global SOURCE_SHEET_NAME 
+        global SOURCE_SHEET_NAME , WarningsList
         # Load source workbook
         src_wb = openpyxl.load_workbook(SOURCE_FILE_PATH)
         repeat = False
         # Check if source sheet exists, if not, use the active sheet
         if SOURCE_SHEET_NAME not in src_wb.sheetnames:
             print(f"List of sheets:\n\t{src_wb.sheetnames}")
-            print(style.YELLOW + f"!--WARNING: Source sheet '{SOURCE_SHEET_NAME}' not found in '{SOURCE_FILE_PATH}'")
+            
+            warningString = f"!--WARNING: Source sheet '{SOURCE_SHEET_NAME}' not found in '{SOURCE_FILE_PATH}'"
+            WarningsList.append(warningString)
+            
+            print(style.YELLOW + warningString)
             print(f"if unchanged, it will default to using the active sheet '{src_wb.active}'" + style.RESET)
+            
             tempval = input("if this is fine type 'o': \t")
             if tempval.strip() != "o":
                 repeat = True
@@ -858,5 +885,10 @@ else:
 ###   --Outro
 
 print(f"\n{MY_NAME} END\n")
+if len(WarningsList) > 0:
+    print("Warnings:"+ style.YELLOW)
+    for warning in WarningsList:
+        print(warning)
+    print(style.RESET)
 # Prompt the user to press Enter before closing
 input("Press Enter to close...")
