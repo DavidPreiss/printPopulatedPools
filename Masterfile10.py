@@ -567,7 +567,6 @@ if True:
                         temp_path = WEB_ARCHIVE_PATH+"/P"+output_path
                         if not os.path.exists(temp_path): 
                             os.makedirs(temp_path)
-                        # pdf_writer.add_page(pdf_reader.pages[page_num])
                         temp_path2 = os.path.join(temp_path, f"P{output_path} {folder_prefix[-31:-16]}.pdf")
                         with open(temp_path2, 'wb') as output_file:
                             pdf_writer.write(output_file)
