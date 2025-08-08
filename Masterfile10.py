@@ -59,7 +59,7 @@ if True:
     SKIP_COPY = True
     CLEAR_OLD = True    # set to true if you don't mind directly modifying TARGET_FILE_PATH
 
-    DELETE_EXTRA = True # deletes extra files at the end of everything
+    DELETE_EXTRA = False # deletes extra files at the end of everything
         
     ## create str array for warnings
     WarningsList = []
@@ -530,9 +530,7 @@ if True:
                 warningString = "!--ERROR: Input PDF has fewer pages than elements in the output paths list."
                 WarningsList.append(warningString)
                 
-                ### TODO: Add step here that deletes files
                 raise ValueError(style.RED + warningString + style.RESET)
-                ### TODO: Add step here that deletes files
 
             
             # print(f"\t input_pdf_path:\t {input_pdf_path}") # debug
@@ -569,7 +567,7 @@ if True:
                         temp_path = WEB_ARCHIVE_PATH+"/P"+output_path
                         if not os.path.exists(temp_path): 
                             os.makedirs(temp_path)
-                        pdf_writer.add_page(pdf_reader.pages[page_num])
+                        # pdf_writer.add_page(pdf_reader.pages[page_num])
                         temp_path2 = os.path.join(temp_path, f"P{output_path} {folder_prefix[-31:-16]}.pdf")
                         with open(temp_path2, 'wb') as output_file:
                             pdf_writer.write(output_file)
