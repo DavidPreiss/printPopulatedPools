@@ -4,6 +4,7 @@
 #   keep track of all warnings and print at the end
 
 # TO DO:
+# Zip & store WA
 # locally adopt Andre's path convention for Web Archive
 # Auto-detect xlsx files
 # Manage opening & closing files
@@ -59,7 +60,7 @@ if True:
     SKIP_COPY = True
     CLEAR_OLD = True    # set to true if you don't mind directly modifying TARGET_FILE_PATH
 
-    DELETE_EXTRA = False # deletes extra files at the end of everything
+    DELETE_EXTRA = True # deletes extra files at the end of everything
         
     ## create str array for warnings
     WarningsList = []
@@ -875,7 +876,7 @@ if result is not None:
         os.remove(image_pdf_path)
         print(f" Deleted: {image_pdf_path}")
         os.remove(image_pdf_path2)
-        print(f" Deleted: {image_pdf_path2}")   
+        print(f" Deleted: {image_pdf_path2}")
 else:
     print(style.RED + "OUTPUT INVALID" + style.RESET)
 
