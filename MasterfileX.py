@@ -53,7 +53,9 @@ if True:
 
     WEB_ARCHIVE_BOOL = True  # Archives pages into a Folder, important!
     WEB_ARCHIVE_PATH = "../../Web Archive"
-
+    
+    PDF_COMPRESS = True # uses pikepdf to compress pdf
+    
     SIMPLE_WAY = True   # if true, following 2 dont matter
     SKIP_COPY = True
     CLEAR_OLD = True    # set to true if you don't mind directly modifying TARGET_FILE_PATH
@@ -125,9 +127,26 @@ if True:
         subprocess.check_call(["pip", "install", "pywin32"])
         print("Installation complete. You can now run the script.")
         # exit()
-
+    
+    try:
+        import pikepdf
+    except ImportError as e:
+        print(style.RED + f"!--ERROR:{e}\n pikepdf is not installed. Installing..." + style.RESET)
+        subprocess.check_call(["pip", "install", "pikepdf"])
+        print("Installation complete. You can now run the script.")
+        # exit()
 ###   --Function Definitions
 if True:
+    def compress_pdf(input_file, output_file):
+        # Open the original PDF
+        print("compress_pdf()")
+        print(f"Opening {input_file} ...")
+        with pikepdf.open(input_file, allow_overwriting_input=True) as pdf:
+            print("opened!")
+            # Create a new PDF to store compressed version
+            pdf.save(output_file, compress_streams=True)
+            print(f"saved {output_file}")
+
     def MonthStr2Int(month_name):
         try:
             # Make it case-insensitive by capitalizing the first letter and lowercasing the rest
@@ -303,12 +322,12 @@ if True:
             output_pdf_path = os.path.join(output_dir, (file[0] + ".pdf"))
 
             # Export the workbook to PDF
-            workbook.ExportAsFixedFormat(0, output_pdf_path)
+            workbook.ExportAsFixedFormat(0, output_pdf_path, 0)
 
             # Close the workbook and quit Excel
             workbook.Close(False)
             excel_app.Quit()
-
+            
             # print(f"PDF created with excel successfully: {output_pdf_path}")
             return output_pdf_path
 
@@ -724,7 +743,7 @@ if True:
         return repeat
 
     def verifyDate():
-        Deadline = datetime(2026, 1, 31)
+        Deadline = datetime(2026, 6, 31)
         # print(f"Deadline:\t{Deadline} \nCurrent:\t{datetime.now()}")
         if (datetime.now() > Deadline):
             # print(f"CONDITION")
@@ -745,6 +764,7 @@ if True:
         else:
             return
 
+    
 
 ###   --Main Code
 
@@ -861,6 +881,12 @@ if result is not None:
 
     print(f" Created FINAL_OUTPUT_PATH: \t{FINAL_OUTPUT_PATH}")
     
+    
+    # conditionally compress pdf
+    if PDF_COMPRESS:
+        print("COMPRESS")
+        compress_pdf(FINAL_OUTPUT_PATH, FINAL_OUTPUT_PATH)
+                
     print(f"\nSplitting FINAL_OUTPUT_PATH into Individual Reports...")
     # Then split each page of that pdf into their own pdfs and label them
     # split_pdf_pages(image_pdf_path, list_page_names) # not needed
