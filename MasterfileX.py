@@ -743,7 +743,7 @@ if True:
         return repeat
 
     def verifyDate():
-        Deadline = datetime(2026, 6, 31)
+        Deadline = datetime(2026, 6, 28)
         # print(f"Deadline:\t{Deadline} \nCurrent:\t{datetime.now()}")
         if (datetime.now() > Deadline):
             # print(f"CONDITION")
