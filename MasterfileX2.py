@@ -20,7 +20,7 @@
 #   --Outro
 
 #   --Intro
-MY_NAME = "MasterfileX.py"
+MY_NAME = "MasterfileX2.py"
 print(f"\n{MY_NAME} START\n")
 
 ###   --Hard-Coded Values
@@ -135,6 +135,13 @@ if True:
         subprocess.check_call(["pip", "install", "pikepdf"])
         print("Installation complete. You can now run the script.")
         # sys.exit()
+    
+    try:
+        import pythoncom
+    except ImportError as e:
+        print(style.RED + f"!--ERROR:{e}\n pythoncom is not installed. Installing..." + style.RESET)
+        subprocess.check_call(["pip", "install", "pythoncom"])
+        print("Installation complete. You can now run the script.")
 ###   --Function Definitions
 if True:
     def compress_pdf(input_file, output_file):
@@ -303,6 +310,10 @@ if True:
             return None
 
     def xlsx_to_pdf_with_excel(xlsx_file_path, output_pdf_name):
+        pythoncom.CoInitialize() #prevents silent hangs
+        
+        excel_app = None
+        workbook = None
         try:
             # Ensure that the output PDF directory exists (current working directory)
             output_dir = os.getcwd()
@@ -310,8 +321,9 @@ if True:
             # print(f"Output directory: '{output_dir}'") # debug
 
             # Connect to Excel application
-            excel_app = win32com.client.Dispatch("Excel.Application")
-            excel_app.Visible = False
+            excel_app = win32com.client.DispatchEx("Excel.Application")
+            excel_app.Visible = False #don't need an excel window flashing up
+            excel_app.DisplayAlerts = False #alerts can block execution
 
             # Open the xlsx file
             workbook = excel_app.Workbooks.Open(os.path.abspath(xlsx_file_path))
@@ -324,9 +336,6 @@ if True:
             # Export the workbook to PDF
             workbook.ExportAsFixedFormat(0, output_pdf_path, 0)
 
-            # Close the workbook and quit Excel
-            workbook.Close(False)
-            excel_app.Quit()
             
             # print(f"PDF created with excel successfully: {output_pdf_path}")
             return output_pdf_path
@@ -334,6 +343,15 @@ if True:
         except Exception as e:
             print(style.RED + f"!--ERROR occurred in xlsx_to_pdf_with_excel(): {str(e)}" + style.RESET)
             return None
+        
+        finally:
+            
+            # Close the workbook and quit Excel
+            if workbook:
+                workbook.Close(False)
+            if excel_app:
+                excel_app.Quit()
+            pythoncom.CoUninitialize()
 
     def pdf_to_pdf_exclude_pages(input_path, output_path, list_excluded_pages):
 
