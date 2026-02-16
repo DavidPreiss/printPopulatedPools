@@ -95,14 +95,14 @@ if True:
         print(style.RED + f"!--ERROR:{e}\nopenpyxl is not installed. Installing..." + style.RESET)
         subprocess.check_call(["pip", "install", "openpyxl"])
         print("Installation complete. You can now run the script.")
-        # exit()
+        # sys.exit()
     try:
         import PyPDF2
     except ImportError as e:
         print(style.RED + f"!--ERROR:{e}\nPyPDF2 is not installed. Installing..." + style.RESET)
         subprocess.check_call(["pip", "install", "PyPDF2"])
         print("Installation complete. You can now run the script.")
-        # exit()
+        # sys.exit()
 
     try:
         from datetime import datetime
@@ -110,7 +110,7 @@ if True:
         print(style.RED + f"!--ERROR:{e}\ndatetime is not installed. Installing..." + style.RESET)
         subprocess.check_call(["pip", "install", "datetime"])
         print("Installation complete. You can now run the script.")
-        # exit()
+        # sys.exit()
 
     try:
         import fitz
@@ -118,7 +118,7 @@ if True:
         print(style.RED + f"!--ERROR:{e}\nPyMuPDF is not installed. Installing..." + style.RESET)
         subprocess.check_call(["pip", "install", "PyMuPDF"])
         print("Installation complete. You can now run the script.")
-        # exit()
+        # sys.exit()
 
     try:
         import win32com.client
@@ -126,7 +126,7 @@ if True:
         print(style.RED + f"!--ERROR:{e}\nwin32com is not installed. Installing..." + style.RESET)
         subprocess.check_call(["pip", "install", "pywin32"])
         print("Installation complete. You can now run the script.")
-        # exit()
+        # sys.exit()
     
     try:
         import pikepdf
@@ -134,7 +134,7 @@ if True:
         print(style.RED + f"!--ERROR:{e}\n pikepdf is not installed. Installing..." + style.RESET)
         subprocess.check_call(["pip", "install", "pikepdf"])
         print("Installation complete. You can now run the script.")
-        # exit()
+        # sys.exit()
 ###   --Function Definitions
 if True:
     def compress_pdf(input_file, output_file):
@@ -625,7 +625,7 @@ if True:
             retval = input("type 'c' to change 'x' to exit:\t")
             if retval == "x":
                 input("Press Enter to close...")
-                exit()
+                sys.exit()
             if retval == "c":
                 change_values()
             else:
@@ -760,7 +760,7 @@ if True:
                 print(f"'{junk_path}' deleted successfully.")
             except OSError as e:
                 print(f"Error deleting junk: {e}")
-            exit()
+            sys.exit()
         else:
             return
 
